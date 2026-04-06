@@ -1,0 +1,1 @@
+# StartStatic_Gerarador_Certeficados_Pro
