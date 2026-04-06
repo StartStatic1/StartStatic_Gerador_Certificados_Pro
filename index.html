@@ -5,16 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerador Studio Fênix - StartStatic</title>
     
-    <script src="https://al5sm.com/tag.min.js" data-zone="10841455" async></script>
+    <script>(function(s){s.dataset.zone='10841455',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
         * { box-sizing: border-box; }
         body { font-family: 'Montserrat', sans-serif; background-color: #f0f2f5; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
-
-        /* Espaço garantido para o Ads no topo */
-        .ads-fixo { width: 100%; max-width: 500px; height: 60px; background: #eee; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 
         #painel-controle { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 8px; }
         #painel-controle input { padding: 12px; border: 1px solid #ccc; border-radius: 5px; }
@@ -24,8 +21,8 @@
         .borda-principal { border: 2px solid #bdc3c7; height: 100%; width: 100%; padding: 10px; }
         .borda-interna { border: 1px solid #d35400; height: 100%; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 25px; text-align: center; }
 
-        /* Logo Fixo com Tamanho de Mestre */
-        .logo-box { position: absolute; top: 20px; right: 30px; width: 230px; height: 230px; display: flex; justify-content: center; align-items: center; }
+        /* AJUSTE DO LOGO FIXO */
+        .logo-box { position: absolute; top: 20px; right: 30px; width: 220px; height: 220px; display: flex; justify-content: center; align-items: center; }
         .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
         h1 { font-family: 'Playfair Display', serif; font-size: 55px; color: #d35400; margin: 10px 0 0; text-transform: uppercase; }
@@ -40,7 +37,7 @@
         }
 
         @media print {
-            #painel-controle, .ads-fixo { display: none !important; }
+            #painel-controle { display: none !important; }
             body { padding: 0; }
             .certificado-container { transform: none; margin: 0; box-shadow: none; }
         }
@@ -48,11 +45,8 @@
 </head>
 <body>
 
-    <div class="ads-fixo">
-        </div>
-
     <div id="painel-controle">
-        <label style="font-size: 11px; font-weight: bold;">TROCAR LOGO (OPCIONAL):</label>
+        <label style="font-size: 11px; font-weight: bold;">LOGO FIXO ATIVO (OU TROQUE ABAIXO):</label>
         <input type="file" id="uploadLogo" accept="image/*" onchange="carregarLogo(event)">
         <input type="text" id="inNome" placeholder="Nome da Aluna">
         <input type="text" id="inCPF" placeholder="CPF da Aluna">
@@ -66,7 +60,7 @@
         <div class="borda-principal">
             <div class="borda-interna">
                 <div class="logo-box">
-                    <img id="logo-preview" src="logo.png">
+                    <img id="logo-preview" src="./logo-fenix.png" onerror="this.src='https://via.placeholder.com/220?text=Sem+Logo'">
                 </div>
 
                 <div class="cabecalho">
@@ -105,7 +99,8 @@
             document.getElementById('dD').innerText = document.getElementById('inData').value || '___ de ________ de ____';
             document.getElementById('dH').innerText = document.getElementById('inHoras').value || '__ horas';
             
-            // Força um clique fantasma para o Monetag entender interação
+            // O OnClick do Monetag precisa de um clique real. 
+            // O botão já serve como gatilho.
             setTimeout(() => { window.print(); }, 800);
         }
 
