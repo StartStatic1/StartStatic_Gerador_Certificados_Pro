@@ -1,7 +1,7 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <script>(function(s){s.dataset.zone='10841455',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerador Studio Fênix - Powered by StartStatic</title>
@@ -31,6 +31,8 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            position: relative;
+            z-index: 10;
         }
 
         #painel-controle input {
@@ -92,7 +94,7 @@
             position: relative;
         }
 
-        /* Logo Direito - Tamanho Aumentado conforme pedido */
+        /* Logo Direito */
         .logo-box {
             position: absolute;
             top: 25px;
@@ -100,7 +102,7 @@
             width: 190px;
             height: 190px;
             display: flex;
-            justify-content: center;
+            justify(content: center;
             align-items: center;
         }
         .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
@@ -149,7 +151,6 @@
             text-transform: uppercase;
         }
 
-        /* Rodapé Fixo e Seguro */
         .rodape {
             width: 100%;
             margin-top: auto;
@@ -186,12 +187,11 @@
             text-transform: uppercase;
         }
 
-        /* Responsividade para Visualização Mobile no App */
         @media screen and (max-width: 1100px) {
             .certificado-container { 
                 transform: scale(0.32); 
                 transform-origin: top center;
-                margin-bottom: -550px; /* Ajuste para não ficar um buraco branco enorme embaixo */
+                margin-bottom: -550px; 
             }
         }
 
@@ -291,7 +291,6 @@
             reader.readAsDataURL(event.target.files[0]);
         }
 
-        // Listener para atualizar enquanto digita (reatividade)
         document.querySelectorAll('#painel-controle input').forEach(input => {
             input.addEventListener('input', update);
         });
