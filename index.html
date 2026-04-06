@@ -18,7 +18,7 @@
         
         .btn-gerar { padding: 15px; background-color: #d35400; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; width: 100%; }
 
-        /* CONTAINER PARA EVITAR CORTE LATERAL */
+        /* CONTAINER DO CERTIFICADO */
         .certificado-container { 
             width: 1050px; 
             height: 740px; 
@@ -33,7 +33,7 @@
         .borda-principal { border: 2px solid #bdc3c7; height: 100%; width: 100%; padding: 10px; position: relative; }
         .borda-interna { border: 1px solid #d35400; height: 100%; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 40px; text-align: center; }
 
-        /* LOGO FIXO NO LAYOUT */
+        /* LOGO FIXO NO GITHUB (logo-fenix.png) */
         .logo-box { 
             position: absolute; 
             top: 25px; 
@@ -59,7 +59,7 @@
             .certificado-container { transform: scale(0.32); transform-origin: top center; margin-bottom: -480px; }
         }
 
-        /* AJUSTE PARA IMPRESSÃO E SALVAMENTO SEM CORTES */
+        /* AJUSTE PARA IMPRESSÃO SEM CORTES */
         @media print {
             @page { size: landscape; margin: 0; }
             body { padding: 0; background: white; }
@@ -84,7 +84,7 @@
     <div class="certificado-container" id="area-print">
         <div class="borda-principal">
             <div class="logo-box">
-                <img id="logo-preview" src="https://i.imgur.com/8QG6V9T.png">
+                <img id="logo-preview" src="./logo-fenix.png">
             </div>
             
             <div class="borda-interna">
@@ -120,7 +120,6 @@
     </div>
 
     <script>
-        // ATUALIZAÇÃO EM TEMPO REAL
         function atualizar() {
             document.getElementById('dN').innerText = (document.getElementById('inNome').value || 'NOME DA ALUNA').toUpperCase();
             document.getElementById('dC').innerText = document.getElementById('inCPF').value || 'XXX.XXX.XXX-XX';
