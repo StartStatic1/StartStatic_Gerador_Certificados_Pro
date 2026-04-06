@@ -17,36 +17,65 @@
         #painel-controle input { padding: 12px; border: 1px solid #ccc; border-radius: 5px; }
         .btn-gerar { padding: 15px; background-color: #d35400; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
 
-        .certificado-container { width: 297mm; height: 210mm; background: white; padding: 20px; position: relative; display: flex; flex-direction: column; }
+        /* AJUSTE PARA NÃO COMER OS LADOS */
+        .certificado-container { 
+            width: 297mm; 
+            height: 209mm; 
+            background: white; 
+            padding: 15px; 
+            position: relative; 
+            display: flex; 
+            flex-direction: column;
+            overflow: hidden;
+        }
+
         .borda-principal { border: 2px solid #bdc3c7; height: 100%; width: 100%; padding: 10px; }
         .borda-interna { border: 1px solid #d35400; height: 100%; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 25px; text-align: center; }
 
-        /* AJUSTE DO LOGO FIXO */
-        .logo-box { position: absolute; top: 20px; right: 30px; width: 220px; height: 220px; display: flex; justify-content: center; align-items: center; }
+        /* LOGO AFASTADO DA BORDA DIREITA */
+        .logo-box { 
+            position: absolute; 
+            top: 30px; 
+            right: 50px; /* Aumentei de 30 para 50 para não colar na borda */
+            width: 200px; 
+            height: 200px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+        }
         .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
         h1 { font-family: 'Playfair Display', serif; font-size: 55px; color: #d35400; margin: 10px 0 0; text-transform: uppercase; }
         .nome-destaque { font-family: 'Playfair Display', serif; font-size: 38px; font-weight: bold; color: #2c3e50; border-bottom: 2px solid #bdc3c7; margin: 8px 0; padding: 0 25px; }
 
         .rodape { width: 100%; margin-top: auto; padding-bottom: 10px; }
-        .linha-assinatura { border-top: 1.5px solid #2c3e50; width: 600px; margin: 0 auto; padding-top: 8px; }
+        .linha-assinatura { border-top: 1.5px solid #2c3e50; width: 80%; max-width: 600px; margin: 0 auto; padding-top: 8px; }
         .especialidades-texto { font-size: 10px; color: #7f8c8d; text-transform: uppercase; margin-top: 5px; line-height: 1.4; }
 
         @media screen and (max-width: 1100px) {
-            .certificado-container { transform: scale(0.3); transform-origin: top center; margin-bottom: -430px; }
+            .certificado-container { transform: scale(0.3); transform-origin: top center; margin-bottom: -440px; }
         }
 
+        /* AJUSTE FINO DE IMPRESSÃO */
         @media print {
+            @page { size: landscape; margin: 0; }
             #painel-controle { display: none !important; }
-            body { padding: 0; }
-            .certificado-container { transform: none; margin: 0; box-shadow: none; }
+            body { padding: 0; background: none; }
+            .certificado-container { 
+                transform: none; 
+                margin: 0; 
+                box-shadow: none; 
+                width: 100%; 
+                height: 100vh;
+                padding: 10mm; /* Margem de segurança para a impressora */
+            }
         }
     </style>
 </head>
 <body>
 
     <div id="painel-controle">
-        <label style="font-size: 11px; font-weight: bold;">LOGO FIXO ATIVO (OU TROQUE ABAIXO):</label>
+        <label style="font-size: 11px; font-weight: bold;">CONFIGURAÇÕES DO CERTIFICADO:</label>
         <input type="file" id="uploadLogo" accept="image/*" onchange="carregarLogo(event)">
         <input type="text" id="inNome" placeholder="Nome da Aluna">
         <input type="text" id="inCPF" placeholder="CPF da Aluna">
@@ -60,7 +89,7 @@
         <div class="borda-principal">
             <div class="borda-interna">
                 <div class="logo-box">
-                    <img id="logo-preview" src="./logo-fenix.png" onerror="this.src='https://via.placeholder.com/220?text=Sem+Logo'">
+                    <img id="logo-preview" src="./logo-fenix.png">
                 </div>
 
                 <div class="cabecalho">
@@ -70,7 +99,7 @@
                 <div>
                     <h1>Certificado</h1>
                     <div style="font-size: 22px; color: #7f8c8d;">de Participação</div>
-                    <div style="font-size: 20px; margin: 20px 0;">Certificamos com orgulho que</div>
+                    <div style="font-size: 20px; margin: 15px 0;">Certificamos com orgulho que</div>
                     <div class="nome-destaque" id="dN">NOME DA ALUNA</div>
                     <div style="font-size: 20px;">portador(a) do CPF: <span id="dC">XXX.XXX.XXX-XX</span>,</div>
                     <div style="font-size: 20px;">concluiu o curso de</div>
@@ -99,9 +128,7 @@
             document.getElementById('dD').innerText = document.getElementById('inData').value || '___ de ________ de ____';
             document.getElementById('dH').innerText = document.getElementById('inHoras').value || '__ horas';
             
-            // O OnClick do Monetag precisa de um clique real. 
-            // O botão já serve como gatilho.
-            setTimeout(() => { window.print(); }, 800);
+            setTimeout(() => { window.print(); }, 1000);
         }
 
         function carregarLogo(event) {
