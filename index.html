@@ -12,7 +12,7 @@
 
 body {
     font-family: 'Montserrat', sans-serif;
-    background-color: #f0f2f5;
+    background: #eef1f5;
     margin: 0;
     padding: 10px;
     display: flex;
@@ -23,7 +23,7 @@ body {
 /* MARCA */
 .marca {
     font-size: 12px;
-    color: #7f8c8d;
+    color: #95a5a6;
     margin-bottom: 10px;
 }
 
@@ -31,8 +31,8 @@ body {
 #painel-controle {
     background: white;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.08);
     margin-bottom: 20px;
     width: 100%;
     max-width: 500px;
@@ -43,22 +43,24 @@ body {
 
 #painel-controle input {
     padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
 }
 
-/* BOTÃO */
+/* BOTÃO PREMIUM */
 .btn-gerar {
     padding: 18px;
-    background: linear-gradient(135deg, #d35400, #ff6a00);
+    background: linear-gradient(135deg, #d35400, #ff7a18);
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
-    text-transform: uppercase;
-    font-size: 16px;
+    transition: 0.3s;
+}
+
+.btn-gerar:hover {
+    transform: translateY(-2px);
 }
 
 /* CERTIFICADO */
@@ -70,54 +72,77 @@ body {
 }
 
 .borda-principal {
-    border: 2px solid #bdc3c7;
+    border: 2px solid #dcdcdc;
     height: 100%;
     padding: 10px;
 }
 
 .borda-interna {
-    border: 1px solid #d35400;
+    border: 2px solid #d35400;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 30px 40px;
+    padding: 40px;
     text-align: center;
+    position: relative;
 }
 
-/* TOPO CORRIGIDO */
+/* TOPO CENTRAL */
 .topo-certificado {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    text-align: center;
+    position: relative;
 }
 
+/* LOGO FIXO */
 .logo-box {
-    width: 140px;
-    height: 140px;
+    position: absolute;
+    right: 30px;
+    top: 0;
+    width: 120px;
 }
 
 .logo-box img {
     max-width: 100%;
-    max-height: 100%;
 }
 
 /* TEXTOS */
 h1 {
     font-family: 'Playfair Display', serif;
-    font-size: 60px;
+    font-size: 64px;
     color: #d35400;
+    margin: 10px 0;
+}
+
+.subtitulo {
+    font-size: 22px;
+    color: #7f8c8d;
 }
 
 .nome-destaque {
     font-family: 'Playfair Display', serif;
-    font-size: 40px;
+    font-size: 42px;
+    margin: 15px 0;
     border-bottom: 2px solid #ccc;
-    margin: 10px 0;
+    display: inline-block;
+    padding: 5px 40px;
 }
 
-.info-curso {
-    font-size: 18px;
+.curso {
+    font-size: 26px;
+    color: #d35400;
+    font-weight: bold;
+}
+
+/* ASSINATURA */
+.assinatura {
+    margin-top: 40px;
+}
+
+.assinatura hr {
+    width: 300px;
+}
+
+.assinatura span {
+    font-size: 14px;
+    color: #555;
 }
 
 /* MOBILE */
@@ -127,13 +152,12 @@ h1 {
     }
 }
 
-/* PRINT PERFEITO */
+/* PRINT */
 @media print {
-    body * {
-        visibility: hidden;
-    }
+    body * { visibility: hidden; }
 
-    .certificado-container, .certificado-container * {
+    .certificado-container,
+    .certificado-container * {
         visibility: visible;
     }
 
@@ -177,13 +201,11 @@ h1 {
 
             <!-- TOPO -->
             <div class="topo-certificado">
-                <div>
-                    <div style="font-size: 16px; font-weight: 600;">
-                        STUDIO FÊNIX - TREINAMENTO INTEGRADO
-                    </div>
-                    <div style="font-size: 11px;">
-                        CNPJ: 14.553.773/0001-00
-                    </div>
+                <div style="font-size: 18px; font-weight: 600;">
+                    STUDIO FÊNIX - TREINAMENTO INTEGRADO
+                </div>
+                <div style="font-size: 11px;">
+                    CNPJ: 14.553.773/0001-00
                 </div>
 
                 <div class="logo-box">
@@ -194,7 +216,7 @@ h1 {
             <!-- CONTEÚDO -->
             <div>
                 <h1>Certificado</h1>
-                <div>de Participação</div>
+                <div class="subtitulo">de Participação</div>
 
                 <p>Certificamos com orgulho que</p>
 
@@ -204,21 +226,19 @@ h1 {
 
                 <p>concluiu com êxito o curso de</p>
 
-                <div style="color:#d35400; font-size: 26px;" id="dCr">
-                    NOME DO CURSO
-                </div>
+                <div class="curso" id="dCr">NOME DO CURSO</div>
 
-                <div class="info-curso">
+                <p>
                     Realizado em <span id="dD">____</span>,
                     com carga horária total de <span id="dH">__ horas</span>.
-                </div>
+                </p>
             </div>
 
-            <!-- RODAPÉ -->
-            <div>
-                <hr style="width:60%;">
+            <!-- ASSINATURA -->
+            <div class="assinatura">
+                <hr>
                 <b>SANDRA ISABEL FERRADA FLORES</b><br>
-                Cref: 071355-G/SP - Licenciatura Plena
+                <span>Cref: 071355-G/SP - Licenciatura Plena</span>
             </div>
 
         </div>
