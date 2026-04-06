@@ -11,12 +11,13 @@
         * { box-sizing: border-box; -webkit-print-color-adjust: exact; }
         body { font-family: 'Montserrat', sans-serif; background-color: #f0f2f5; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
 
-        /* PAINEL SEM ADS */
-        #painel-controle { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 10px; }
+        /* PAINEL DE CONTROLE - SEM ADS */
+        #painel-controle { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 12px; }
         #painel-controle input { padding: 12px; border: 1px solid #ccc; border-radius: 5px; width: 100%; font-size: 14px; }
-        .btn-gerar { padding: 18px; background-color: #d35400; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; width: 100%; font-size: 16px; }
+        .btn-gerar { padding: 18px; background-color: #d35400; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; width: 100%; font-size: 16px; transition: 0.3s; }
+        .btn-gerar:active { background-color: #a04000; }
 
-        /* CONTAINER DO CERTIFICADO - FORMATO A4 PAISAGEM */
+        /* AREA DO CERTIFICADO */
         .certificado-container { 
             width: 1120px; 
             height: 790px; 
@@ -25,63 +26,59 @@
             position: relative; 
             display: flex; 
             flex-direction: column;
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
         }
 
         .borda-principal { border: 2px solid #bdc3c7; height: 100%; width: 100%; padding: 12px; position: relative; }
-        .borda-interna { border: 1px solid #d35400; height: 100%; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 45px 50px; text-align: center; }
+        .borda-interna { border: 1px solid #d35400; height: 100%; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 40px 50px; text-align: center; }
 
-        /* LOGO FIXO */
+        /* LOGO FIXO LATERAL */
         .logo-box { 
             position: absolute; 
-            top: 25px; 
+            top: 30px; 
             right: 45px; 
-            width: 170px; 
-            height: 170px; 
+            width: 160px; 
+            height: 160px; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
         }
         .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-        h1 { font-family: 'Playfair Display', serif; font-size: 65px; color: #d35400; margin: 10px 0 0; text-transform: uppercase; letter-spacing: 2px; }
+        h1 { font-family: 'Playfair Display', serif; font-size: 65px; color: #d35400; margin: 10px 0 0; text-transform: uppercase; }
         .nome-destaque { font-family: 'Playfair Display', serif; font-size: 44px; font-weight: bold; color: #2c3e50; border-bottom: 2px solid #bdc3c7; margin: 15px 0; min-width: 500px; padding-bottom: 5px; }
 
-        /* LINHA DO CURSO RETA */
         .info-curso { font-size: 18px; color: #2c3e50; margin-top: 10px; width: 100%; }
 
-        /* RODAPÉ COM MAIS ESPAÇO (ASSINATURA) */
-        .rodape { width: 100%; margin-top: 50px; padding-bottom: 10px; }
-        .linha-assinatura { border-top: 1.5px solid #2c3e50; width: 70%; max-width: 600px; margin: 0 auto; padding-top: 12px; }
-        
-        /* ESPECIFICAÇÕES MAIS NÍTIDAS */
-        .especialidades-texto { font-size: 12px; color: #5a6667; text-transform: uppercase; margin-top: 8px; line-height: 1.6; font-weight: 500; }
+        /* RODAPÉ AJUSTADO PARA NÃO COMER NA ASSINATURA */
+        .rodape { width: 100%; margin-top: 40px; padding-bottom: 30px; }
+        .linha-assinatura { border-top: 1.5px solid #2c3e50; width: 70%; max-width: 600px; margin: 0 auto; padding-top: 15px; }
+        .especialidades-texto { font-size: 12px; color: #5a6667; text-transform: uppercase; margin-top: 10px; line-height: 1.6; font-weight: 500; }
 
-        /* MOBILE PREVIEW */
+        /* PREVIEW NO CELULAR */
         @media screen and (max-width: 1100px) {
-            .certificado-container { transform: scale(0.3); transform-origin: top center; margin-bottom: -520px; }
+            .certificado-container { transform: scale(0.3); transform-origin: top center; margin-bottom: -540px; }
         }
 
-        /* PRINT FIX */
+        /* AJUSTE PARA SALVAR COMO ISO A4 */
         @media print {
             @page { size: landscape; margin: 0; }
             body { padding: 0; background: white; }
             #painel-controle { display: none !important; }
-            .certificado-container { transform: none !important; width: 100vw; height: 100vh; border: none; padding: 15mm; }
+            .certificado-container { transform: none !important; width: 100vw; height: 100vh; border: none; padding: 12mm; }
         }
     </style>
 </head>
 <body>
 
     <div id="painel-controle">
-        <label style="font-size: 12px; font-weight: bold; color: #d35400;">ESTÚDIO FÊNIX - GERADOR OFICIAL</label>
+        <label style="font-size: 11px; font-weight: bold; color: #d35400;">PAINEL STUDIO FÊNIX:</label>
         <input type="file" id="uploadLogo" accept="image/*" onchange="carregarLogo(event)">
         <input type="text" id="inNome" placeholder="Nome da Aluna" oninput="atualizar()">
         <input type="text" id="inCPF" placeholder="CPF da Aluna" oninput="atualizar()">
         <input type="text" id="inCurso" placeholder="Nome do Curso" oninput="atualizar()">
         <input type="text" id="inData" placeholder="Cidade, Data e Ano" oninput="atualizar()">
         <input type="text" id="inHoras" placeholder="Carga Horária (Ex: 08 Horas)" oninput="atualizar()">
-        <button class="btn-gerar" onclick="salvar()">SALVAR PDF / IMPRIMIR</button>
+        <button class="btn-gerar" id="btnSalvar">SALVAR PDF / IMPRIMIR</button>
     </div>
 
     <div class="certificado-container">
@@ -93,27 +90,27 @@
             <div class="borda-interna">
                 <div class="cabecalho">
                     <div style="font-size: 18px; font-weight: 600; letter-spacing: 1px;">STUDIO FÊNIX - TREINAMENTO INTEGRADO</div>
-                    <div style="font-size: 12px; color: #7f8c8d; margin-top: 4px;">CNPJ: 14.553.773/0001-00</div>
+                    <div style="font-size: 11px; color: #7f8c8d;">CNPJ: 14.553.773/0001-00</div>
                 </div>
 
                 <div>
                     <h1>Certificado</h1>
-                    <div style="font-size: 26px; color: #7f8c8d; font-weight: 300;">de Participação</div>
+                    <div style="font-size: 26px; color: #7f8c8d;">de Participação</div>
                     <div style="font-size: 22px; margin: 30px 0 10px;">Certificamos com orgulho que</div>
                     <div class="nome-destaque" id="dN">NOME DA ALUNA</div>
                     <div style="font-size: 21px;">portador(a) do CPF: <span id="dC" style="font-weight: 600;">XXX.XXX.XXX-XX</span>,</div>
                     <div style="font-size: 21px; margin-top: 12px;">concluiu com êxito o curso de</div>
-                    <div style="font-size: 36px; font-weight: bold; color: #d35400; text-transform: uppercase; margin: 5px 0;" id="dCr">NOME DO CURSO</div>
+                    <div style="font-size: 36px; font-weight: bold; color: #d35400; text-transform: uppercase;" id="dCr">NOME DO CURSO</div>
                     
                     <div class="info-curso">
-                        Realizado em <span id="dD" style="font-weight: 500;">____________________</span>, com carga horária total de <span id="dH" style="font-weight: 500;">__ horas</span>.
+                        Realizado em <span id="dD">____________________</span>, com carga horária total de <span id="dH">__ horas</span>.
                     </div>
                 </div>
 
                 <div class="rodape">
                     <div class="linha-assinatura">
                         <span style="font-weight: bold; font-size: 21px; color: #2c3e50;">SANDRA ISABEL FERRADA FLORES</span><br>
-                        <span style="font-size: 15px; color: #2c3e50;">Cref: 071355-G/SP - Licenciatura Plena</span>
+                        <span style="font-size: 15px;">Cref: 071355-G/SP - Licenciatura Plena</span>
                         <div class="especialidades-texto">
                             Especialista em Treinamento Funcional • Medicina do Esporte<br>
                             Pilates: Abordagem Multidisciplinar • Traumato-Ortopédica
@@ -125,16 +122,17 @@
     </div>
 
     <script>
+        // FUNÇÃO DE IMPRESSÃO DIRETA PARA EVITAR BLOQUEIOS
+        document.getElementById('btnSalvar').addEventListener('click', function() {
+            window.print();
+        });
+
         function atualizar() {
             document.getElementById('dN').innerText = (document.getElementById('inNome').value || 'NOME DA ALUNA').toUpperCase();
             document.getElementById('dC').innerText = document.getElementById('inCPF').value || 'XXX.XXX.XXX-XX';
             document.getElementById('dCr').innerText = (document.getElementById('inCurso').value || 'NOME DO CURSO').toUpperCase();
-            document.getElementById('dD').innerText = document.getElementById('inData').value || '___ de ________ de ____';
+            document.getElementById('dD').innerText = document.getElementById('inData').value || '____________________';
             document.getElementById('dH').innerText = document.getElementById('inHoras').value || '__ horas';
-        }
-
-        function salvar() {
-            window.print();
         }
 
         function carregarLogo(event) {
