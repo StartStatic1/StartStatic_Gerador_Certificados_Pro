@@ -1,0 +1,301 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador Studio Fênix - Powered by StartStatic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Painel de Controle - Visível apenas na edição */
+        #painel-controle {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        #painel-controle input {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .btn-gerar {
+            padding: 15px;
+            background-color: #d35400;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+
+        .dev-footer {
+            text-align: center;
+            font-size: 10px;
+            color: #95a5a6;
+            margin-top: 10px;
+        }
+
+        /* Certificado - Travado em A4 Paisagem */
+        .certificado-container {
+            width: 297mm;
+            height: 210mm;
+            background: white;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .borda-principal {
+            border: 2px solid #bdc3c7;
+            height: 100%;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .borda-interna {
+            border: 1px solid #d35400;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Logo Direito - Tamanho Aumentado conforme pedido */
+        .logo-box {
+            position: absolute;
+            top: 25px;
+            right: 35px;
+            width: 190px;
+            height: 190px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        .cabecalho-texto {
+            font-size: 16px;
+            color: #2c3e50;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+        
+        .cnpj-texto {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 2px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 55px;
+            color: #d35400;
+            margin: 15px 0 0;
+            text-transform: uppercase;
+        }
+
+        .sub-cert { font-size: 22px; color: #7f8c8d; margin-bottom: 20px; }
+
+        .texto-corpo { font-size: 20px; color: #34495e; margin: 6px 0; }
+
+        .nome-destaque {
+            font-family: 'Playfair Display', serif;
+            font-size: 38px;
+            font-weight: bold;
+            color: #2c3e50;
+            border-bottom: 2px solid #bdc3c7;
+            margin: 10px 0;
+            display: inline-block;
+            padding: 0 25px;
+        }
+
+        .curso-nome {
+            font-size: 30px;
+            font-weight: bold;
+            color: #d35400;
+            margin: 15px 0;
+            text-transform: uppercase;
+        }
+
+        /* Rodapé Fixo e Seguro */
+        .rodape {
+            width: 100%;
+            margin-top: auto;
+            padding-bottom: 10px;
+        }
+
+        .linha-assinatura {
+            border-top: 1.5px solid #2c3e50;
+            width: 450px;
+            margin: 0 auto;
+            padding-top: 10px;
+        }
+
+        .nome-profa { 
+            font-family: 'Playfair Display', serif;
+            font-weight: bold; 
+            font-size: 22px; 
+            color: #2c3e50; 
+        }
+        
+        .cref-texto {
+            font-family: 'Playfair Display', serif;
+            font-size: 15px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 5px 0;
+            display: block;
+        }
+
+        .especs { 
+            font-size: 11px; 
+            color: #7f8c8d; 
+            line-height: 1.4; 
+            text-transform: uppercase;
+        }
+
+        /* Responsividade para Visualização Mobile no App */
+        @media screen and (max-width: 1100px) {
+            .certificado-container { 
+                transform: scale(0.32); 
+                transform-origin: top center;
+                margin-bottom: -550px; /* Ajuste para não ficar um buraco branco enorme embaixo */
+            }
+        }
+
+        @media print {
+            @page { size: landscape; margin: 0; }
+            body { padding: 0; background: none; }
+            #painel-controle { display: none; }
+            .certificado-container { 
+                box-shadow: none; 
+                transform: none; 
+                margin: 0;
+                width: 297mm;
+                height: 210mm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="painel-controle">
+        <label style="font-size: 11px; font-weight: bold;">SELECIONAR LOGO DA GALERIA:</label>
+        <input type="file" id="uploadLogo" accept="image/*" onchange="carregarLogo(event)">
+        
+        <input type="text" id="inNome" placeholder="Nome da Aluna">
+        <input type="text" id="inCPF" placeholder="CPF da Aluna">
+        <input type="text" id="inCurso" placeholder="Nome do Curso">
+        <input type="text" id="inData" placeholder="Cidade, Data e Ano">
+        <input type="text" id="inHoras" placeholder="Carga Horária (Ex: 100 horas)">
+        
+        <button class="btn-gerar" onclick="update(); window.print()">Gerar & Salvar PDF</button>
+        
+        <div class="dev-footer">
+            Desenvolvido por <strong>StartStatic Tecnologia Ltda</strong>
+        </div>
+    </div>
+
+    <div class="certificado-container">
+        <div class="borda-principal">
+            <div class="borda-interna">
+                
+                <div class="logo-box">
+                    <img id="logo-preview" src="" style="display: none;">
+                </div>
+
+                <div class="cabecalho">
+                    <div class="cabecalho-texto">STUDIO FÊNIX - TREINAMENTO INTEGRADO</div>
+                    <div class="cnpj-texto">CNPJ: 14.553.773/0001-00</div>
+                </div>
+                
+                <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
+                    <h1>Certificado</h1>
+                    <div class="sub-cert">de Participação</div>
+
+                    <div class="texto-corpo">Certificamos com orgulho que</div>
+                    <div class="nome-destaque" id="dN">NOME DA ALUNA</div>
+                    <div class="texto-corpo">portador(a) do CPF: <span id="dC">XXX.XXX.XXX-XX</span>,</div>
+                    <div class="texto-corpo">concluiu com êxito o curso de</div>
+                    <div class="curso-nome" id="dCr">NOME DO CURSO</div>
+
+                    <div class="texto-corpo" style="font-size: 15px; margin-top: 10px;">
+                        Realizado em <span id="dD">___ de ________ de ____</span>, com carga horária total de <span id="dH">__ horas</span>.
+                    </div>
+                </div>
+
+                <div class="rodape">
+                    <div class="linha-assinatura">
+                        <span class="nome-profa">SANDRA ISABEL FERRADA FLORES</span><br>
+                        <span class="cref-texto">Cref : 071355-G/SP - Licenciatura plena</span>
+                        
+                        <div class="especs">
+                            Especialista em Pilates e Traumato-ortopedia | Treinamento Funcional<br>
+                            Medicina do Esporte e da Atividade Física | Abordagem Multidisciplinar
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function update() {
+            document.getElementById('dN').innerText = (document.getElementById('inNome').value || 'NOME DA ALUNA').toUpperCase();
+            document.getElementById('dC').innerText = document.getElementById('inCPF').value || 'XXX.XXX.XXX-XX';
+            document.getElementById('dCr').innerText = (document.getElementById('inCurso').value || 'NOME DO CURSO').toUpperCase();
+            document.getElementById('dD').innerText = document.getElementById('inData').value || '___ de ________ de ____';
+            document.getElementById('dH').innerText = document.getElementById('inHoras').value || '__ horas';
+        }
+
+        function carregarLogo(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const output = document.getElementById('logo-preview');
+                output.src = reader.result;
+                output.style.display = 'block';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        // Listener para atualizar enquanto digita (reatividade)
+        document.querySelectorAll('#painel-controle input').forEach(input => {
+            input.addEventListener('input', update);
+        });
+    </script>
+
+</body>
+</html>
