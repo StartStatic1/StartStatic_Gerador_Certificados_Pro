@@ -6,6 +6,7 @@
     <title>Gerador Studio Fênix - Powered by StartStatic</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     
+    <script>(function(s){s.dataset.zone='10841455',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -19,16 +20,6 @@
             overflow-x: hidden;
         }
 
-        /* Ajuste para o Anúncio não quebrar o layout */
-        .ads-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 1px;
-            height: 1px;
-            z-index: -1;
-        }
-
         #painel-controle {
             background: white;
             padding: 15px;
@@ -40,7 +31,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            z-index: 10;
+            z-index: 100;
         }
 
         #painel-controle input {
@@ -63,7 +54,7 @@
             text-transform: uppercase;
         }
 
-        /* Certificado - Tamanho A4 Paisagem */
+        /* Certificado A4 Paisagem */
         .certificado-container {
             width: 297mm;
             height: 210mm;
@@ -112,19 +103,20 @@
             font-family: 'Playfair Display', serif;
             font-size: 55px;
             color: #d35400;
-            margin: 15px 0 0;
+            margin: 10px 0 0;
             text-transform: uppercase;
         }
 
-        .sub-cert { font-size: 22px; color: #7f8c8d; margin-bottom: 20px; }
-        .texto-corpo { font-size: 20px; color: #34495e; margin: 6px 0; }
+        .sub-cert { font-size: 22px; color: #7f8c8d; margin-bottom: 15px; }
+        .texto-corpo { font-size: 20px; color: #34495e; margin: 4px 0; }
+        
         .nome-destaque {
             font-family: 'Playfair Display', serif;
             font-size: 38px;
             font-weight: bold;
             color: #2c3e50;
             border-bottom: 2px solid #bdc3c7;
-            margin: 10px 0;
+            margin: 8px 0;
             display: inline-block;
             padding: 0 25px;
         }
@@ -133,21 +125,31 @@
             font-size: 30px;
             font-weight: bold;
             color: #d35400;
-            margin: 15px 0;
+            margin: 12px 0;
             text-transform: uppercase;
         }
 
+        /* Rodapé com as Especialidades */
         .rodape { width: 100%; margin-top: auto; padding-bottom: 10px; }
-        .linha-assinatura { border-top: 1.5px solid #2c3e50; width: 450px; margin: 0 auto; padding-top: 10px; }
-        .nome-profa { font-family: 'Playfair Display', serif; font-weight: bold; font-size: 22px; color: #2c3e50; }
+        .linha-assinatura { border-top: 1.5px solid #2c3e50; width: 600px; margin: 0 auto; padding-top: 8px; }
+        .nome-profa { font-family: 'Playfair Display', serif; font-weight: bold; font-size: 19px; color: #2c3e50; }
+        
+        .especialidades-texto {
+            font-size: 10px;
+            color: #7f8c8d;
+            margin-top: 5px;
+            text-transform: uppercase;
+            line-height: 1.4;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
-        /* Ajuste para caber no Celular (Web2App) */
+        /* Escala Mobile */
         @media screen and (max-width: 1100px) {
-            body { padding: 5px; }
             .certificado-container { 
                 transform: scale(0.3); 
                 transform-origin: top center;
-                margin-top: 10px;
                 margin-bottom: -430px; 
             }
         }
@@ -155,7 +157,7 @@
         @media print {
             @page { size: landscape; margin: 0; }
             body { padding: 0; background: none; }
-            #painel-controle, .ads-container { display: none; }
+            #painel-controle { display: none; }
             .certificado-container { 
                 box-shadow: none; 
                 transform: none; 
@@ -167,10 +169,6 @@
     </style>
 </head>
 <body>
-
-    <div class="ads-container">
-        <script>(function(s){s.dataset.zone='10841455',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-    </div>
 
     <div id="painel-controle">
         <label style="font-size: 11px; font-weight: bold;">LOGO DO STUDIO:</label>
@@ -193,8 +191,9 @@
                 </div>
                 <div class="cabecalho">
                     <div style="font-size: 16px; color: #2c3e50; letter-spacing: 2px; font-weight: 600;">STUDIO FÊNIX - TREINAMENTO INTEGRADO</div>
-                    <div style="font-size: 12px; color: #7f8c8d;">CNPJ: 14.553.773/0001-00</div>
+                    <div style="font-size: 11px; color: #7f8c8d;">CNPJ: 14.553.773/0001-00</div>
                 </div>
+                
                 <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
                     <h1>Certificado</h1>
                     <div class="sub-cert">de Participação</div>
@@ -203,14 +202,20 @@
                     <div class="texto-corpo">portador(a) do CPF: <span id="dC">XXX.XXX.XXX-XX</span>,</div>
                     <div class="texto-corpo">concluiu com êxito o curso de</div>
                     <div class="curso-nome" id="dCr">NOME DO CURSO</div>
-                    <div class="texto-corpo" style="font-size: 15px; margin-top: 10px;">
+                    <div class="texto-corpo" style="font-size: 15px; margin-top: 8px;">
                         Realizado em <span id="dD">___ de ________ de ____</span>, com carga horária de <span id="dH">__ horas</span>.
                     </div>
                 </div>
+
                 <div class="rodape">
                     <div class="linha-assinatura">
                         <span class="nome-profa">SANDRA ISABEL FERRADA FLORES</span><br>
-                        <span style="font-family: 'Playfair Display', serif; font-weight: bold; font-size: 15px; color: #2c3e50;">Cref : 071355-G/SP - Licenciatura plena</span>
+                        <span style="font-weight: bold; font-size: 14px; color: #2c3e50;">Cref: 071355-G/SP - Licenciatura Plena</span>
+                        
+                        <div class="especialidades-texto">
+                            Especialista • Treinamento Funcional • Medicina do Esporte e da Atividade Física<br>
+                            Pilates: Uma Abordagem Multidisciplinar • Traumato-Ortopédica
+                        </div>
                     </div>
                 </div>
             </div>
