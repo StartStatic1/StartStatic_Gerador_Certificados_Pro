@@ -10,109 +10,108 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; }
         body { font-family: 'Montserrat', sans-serif; background-color: #f0f2f5; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
 
-        #painel-controle { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 8px; }
-        #painel-controle input { padding: 12px; border: 1px solid #ccc; border-radius: 5px; }
-        .btn-gerar { padding: 15px; background-color: #d35400; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        #painel-controle { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 10; }
+        #painel-controle input { padding: 12px; border: 1px solid #ccc; border-radius: 5px; width: 100%; }
+        
+        .btn-gerar { padding: 15px; background-color: #d35400; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; width: 100%; }
 
-        /* AJUSTE PARA NÃO COMER OS LADOS */
+        /* CONTAINER PARA EVITAR CORTE LATERAL */
         .certificado-container { 
-            width: 297mm; 
-            height: 209mm; 
+            width: 1050px; 
+            height: 740px; 
             background: white; 
-            padding: 15px; 
+            padding: 20px; 
             position: relative; 
             display: flex; 
             flex-direction: column;
-            overflow: hidden;
+            border: 1px solid #eee;
         }
 
-        .borda-principal { border: 2px solid #bdc3c7; height: 100%; width: 100%; padding: 10px; }
-        .borda-interna { border: 1px solid #d35400; height: 100%; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 25px; text-align: center; }
+        .borda-principal { border: 2px solid #bdc3c7; height: 100%; width: 100%; padding: 10px; position: relative; }
+        .borda-interna { border: 1px solid #d35400; height: 100%; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 40px; text-align: center; }
 
-        /* LOGO AFASTADO DA BORDA DIREITA */
+        /* LOGO FIXO NO LAYOUT */
         .logo-box { 
             position: absolute; 
-            top: 30px; 
-            right: 50px; /* Aumentei de 30 para 50 para não colar na borda */
-            width: 200px; 
-            height: 200px; 
+            top: 25px; 
+            right: 40px; 
+            width: 160px; 
+            height: 160px; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
+            background: transparent;
         }
         .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-        h1 { font-family: 'Playfair Display', serif; font-size: 55px; color: #d35400; margin: 10px 0 0; text-transform: uppercase; }
-        .nome-destaque { font-family: 'Playfair Display', serif; font-size: 38px; font-weight: bold; color: #2c3e50; border-bottom: 2px solid #bdc3c7; margin: 8px 0; padding: 0 25px; }
+        h1 { font-family: 'Playfair Display', serif; font-size: 60px; color: #d35400; margin: 15px 0 0; text-transform: uppercase; }
+        .nome-destaque { font-family: 'Playfair Display', serif; font-size: 42px; font-weight: bold; color: #2c3e50; border-bottom: 2px solid #bdc3c7; margin: 15px 0; min-width: 400px; padding-bottom: 5px; }
 
-        .rodape { width: 100%; margin-top: auto; padding-bottom: 10px; }
-        .linha-assinatura { border-top: 1.5px solid #2c3e50; width: 80%; max-width: 600px; margin: 0 auto; padding-top: 8px; }
-        .especialidades-texto { font-size: 10px; color: #7f8c8d; text-transform: uppercase; margin-top: 5px; line-height: 1.4; }
+        .rodape { width: 100%; margin-top: auto; padding-bottom: 20px; }
+        .linha-assinatura { border-top: 1.5px solid #2c3e50; width: 80%; max-width: 650px; margin: 0 auto; padding-top: 10px; }
+        .especialidades-texto { font-size: 11px; color: #7f8c8d; text-transform: uppercase; margin-top: 5px; line-height: 1.5; }
 
+        /* VISUALIZAÇÃO NO CELULAR */
         @media screen and (max-width: 1100px) {
-            .certificado-container { transform: scale(0.3); transform-origin: top center; margin-bottom: -440px; }
+            .certificado-container { transform: scale(0.32); transform-origin: top center; margin-bottom: -480px; }
         }
 
-        /* AJUSTE FINO DE IMPRESSÃO */
+        /* AJUSTE PARA IMPRESSÃO E SALVAMENTO SEM CORTES */
         @media print {
             @page { size: landscape; margin: 0; }
+            body { padding: 0; background: white; }
             #painel-controle { display: none !important; }
-            body { padding: 0; background: none; }
-            .certificado-container { 
-                transform: none; 
-                margin: 0; 
-                box-shadow: none; 
-                width: 100%; 
-                height: 100vh;
-                padding: 10mm; /* Margem de segurança para a impressora */
-            }
+            .certificado-container { transform: none !important; width: 100vw; height: 100vh; border: none; padding: 10mm; }
         }
     </style>
 </head>
 <body>
 
     <div id="painel-controle">
-        <label style="font-size: 11px; font-weight: bold;">CONFIGURAÇÕES DO CERTIFICADO:</label>
+        <label style="font-size: 11px; font-weight: bold;">STUDIO FÊNIX - PAINEL:</label>
         <input type="file" id="uploadLogo" accept="image/*" onchange="carregarLogo(event)">
-        <input type="text" id="inNome" placeholder="Nome da Aluna">
-        <input type="text" id="inCPF" placeholder="CPF da Aluna">
-        <input type="text" id="inCurso" placeholder="Nome do Curso">
-        <input type="text" id="inData" placeholder="Cidade, Data e Ano">
-        <input type="text" id="inHoras" placeholder="Carga Horária">
-        <button class="btn-gerar" onclick="gerar()">Gerar & Salvar PDF</button>
+        <input type="text" id="inNome" placeholder="Nome da Aluna" oninput="atualizar()">
+        <input type="text" id="inCPF" placeholder="CPF da Aluna" oninput="atualizar()">
+        <input type="text" id="inCurso" placeholder="Nome do Curso" oninput="atualizar()">
+        <input type="text" id="inData" placeholder="Cidade, Data e Ano" oninput="atualizar()">
+        <input type="text" id="inHoras" placeholder="Carga Horária" oninput="atualizar()">
+        <button class="btn-gerar" onclick="salvar()">Salvar PDF / Imprimir</button>
     </div>
 
-    <div class="certificado-container">
+    <div class="certificado-container" id="area-print">
         <div class="borda-principal">
+            <div class="logo-box">
+                <img id="logo-preview" src="https://i.imgur.com/8QG6V9T.png">
+            </div>
+            
             <div class="borda-interna">
-                <div class="logo-box">
-                    <img id="logo-preview" src="./logo-fenix.png">
-                </div>
-
                 <div class="cabecalho">
                     <div style="font-size: 16px; font-weight: 600;">STUDIO FÊNIX - TREINAMENTO INTEGRADO</div>
                     <div style="font-size: 11px; color: #7f8c8d;">CNPJ: 14.553.773/0001-00</div>
                 </div>
+
                 <div>
                     <h1>Certificado</h1>
-                    <div style="font-size: 22px; color: #7f8c8d;">de Participação</div>
-                    <div style="font-size: 20px; margin: 15px 0;">Certificamos com orgulho que</div>
+                    <div style="font-size: 24px; color: #7f8c8d;">de Participação</div>
+                    <div style="font-size: 20px; margin: 25px 0 10px;">Certificamos com orgulho que</div>
                     <div class="nome-destaque" id="dN">NOME DA ALUNA</div>
                     <div style="font-size: 20px;">portador(a) do CPF: <span id="dC">XXX.XXX.XXX-XX</span>,</div>
-                    <div style="font-size: 20px;">concluiu o curso de</div>
-                    <div style="font-size: 30px; font-weight: bold; color: #d35400; text-transform: uppercase;" id="dCr">NOME DO CURSO</div>
-                    <div style="font-size: 15px;">Realizado em <span id="dD">___</span>, com carga de <span id="dH">__</span>.</div>
+                    <div style="font-size: 20px; margin-top: 10px;">concluiu com êxito o curso de</div>
+                    <div style="font-size: 34px; font-weight: bold; color: #d35400; text-transform: uppercase;" id="dCr">NOME DO CURSO</div>
+                    <div style="font-size: 16px; margin-top: 10px;">Realizado em <span id="dD">___ de ________ de ____</span></div>
+                    <div style="font-size: 16px;">com carga horária total de <span id="dH">__ horas</span>.</div>
                 </div>
+
                 <div class="rodape">
                     <div class="linha-assinatura">
-                        <span style="font-weight: bold; font-size: 19px;">SANDRA ISABEL FERRADA FLORES</span><br>
+                        <span style="font-weight: bold; font-size: 20px;">SANDRA ISABEL FERRADA FLORES</span><br>
                         <span style="font-size: 14px;">Cref: 071355-G/SP - Licenciatura Plena</span>
                         <div class="especialidades-texto">
-                            Especialista • Treinamento Funcional • Medicina do Esporte e da Atividade Física<br>
-                            Pilates: Uma Abordagem Multidisciplinar • Traumato-Ortopédica
+                            Especialista em Treinamento Funcional • Medicina do Esporte<br>
+                            Pilates: Abordagem Multidisciplinar • Traumato-Ortopédica
                         </div>
                     </div>
                 </div>
@@ -121,20 +120,27 @@
     </div>
 
     <script>
-        function gerar() {
+        // ATUALIZAÇÃO EM TEMPO REAL
+        function atualizar() {
             document.getElementById('dN').innerText = (document.getElementById('inNome').value || 'NOME DA ALUNA').toUpperCase();
             document.getElementById('dC').innerText = document.getElementById('inCPF').value || 'XXX.XXX.XXX-XX';
             document.getElementById('dCr').innerText = (document.getElementById('inCurso').value || 'NOME DO CURSO').toUpperCase();
             document.getElementById('dD').innerText = document.getElementById('inData').value || '___ de ________ de ____';
             document.getElementById('dH').innerText = document.getElementById('inHoras').value || '__ horas';
-            
-            setTimeout(() => { window.print(); }, 1000);
+        }
+
+        function salvar() {
+            window.print();
         }
 
         function carregarLogo(event) {
             const reader = new FileReader();
-            reader.onload = function() { document.getElementById('logo-preview').src = reader.result; };
-            reader.readAsDataURL(event.target.files[0]);
+            reader.onload = function() {
+                document.getElementById('logo-preview').src = reader.result;
+            };
+            if(event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
         }
     </script>
 </body>
