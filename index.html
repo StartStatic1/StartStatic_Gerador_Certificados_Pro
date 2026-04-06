@@ -20,7 +20,7 @@ body {
     align-items: center;
 }
 
-/* MARCA STARTSTATIC (FORA DO CERTIFICADO) */
+/* MARCA */
 .marca {
     font-size: 12px;
     color: #7f8c8d;
@@ -48,7 +48,7 @@ body {
     font-size: 14px;
 }
 
-/* BOTÃO MELHORADO */
+/* BOTÃO */
 .btn-gerar {
     padding: 18px;
     background: linear-gradient(135deg, #d35400, #ff6a00);
@@ -59,54 +59,42 @@ body {
     cursor: pointer;
     text-transform: uppercase;
     font-size: 16px;
-    transition: 0.3s;
-}
-
-.btn-gerar:hover {
-    transform: translateY(-2px);
-}
-
-.btn-gerar:active {
-    transform: scale(0.98);
 }
 
 /* CERTIFICADO */
 .certificado-container {
-    width: 1120px;
-    height: 790px;
+    width: 297mm;
+    height: 210mm;
     background: white;
-    padding: 25px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
+    padding: 20px;
 }
 
 .borda-principal {
     border: 2px solid #bdc3c7;
     height: 100%;
-    width: 100%;
-    padding: 12px;
+    padding: 10px;
 }
 
 .borda-interna {
     border: 1px solid #d35400;
     height: 100%;
-    width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: space-between;
-    padding: 40px 50px;
+    padding: 30px 40px;
     text-align: center;
 }
 
-/* LOGO */
+/* TOPO CORRIGIDO */
+.topo-certificado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .logo-box {
-    position: absolute;
-    top: 30px;
-    right: 45px;
-    width: 160px;
-    height: 160px;
+    width: 140px;
+    height: 140px;
 }
 
 .logo-box img {
@@ -117,47 +105,29 @@ body {
 /* TEXTOS */
 h1 {
     font-family: 'Playfair Display', serif;
-    font-size: 65px;
+    font-size: 60px;
     color: #d35400;
-    margin: 10px 0 0;
 }
 
 .nome-destaque {
     font-family: 'Playfair Display', serif;
-    font-size: 44px;
-    color: #2c3e50;
-    border-bottom: 2px solid #bdc3c7;
-    margin: 15px 0;
-    min-width: 500px;
+    font-size: 40px;
+    border-bottom: 2px solid #ccc;
+    margin: 10px 0;
 }
 
 .info-curso {
     font-size: 18px;
-    color: #2c3e50;
-}
-
-/* RODAPÉ */
-.rodape {
-    width: 100%;
-    margin-top: 40px;
-}
-
-.linha-assinatura {
-    border-top: 1.5px solid #2c3e50;
-    width: 70%;
-    margin: 0 auto;
-    padding-top: 15px;
 }
 
 /* MOBILE */
 @media screen and (max-width: 1100px) {
     .certificado-container {
         zoom: 0.3;
-        margin-bottom: -500px;
     }
 }
 
-/* PRINT CORRIGIDO */
+/* PRINT PERFEITO */
 @media print {
     body * {
         visibility: hidden;
@@ -169,10 +139,8 @@ h1 {
 
     .certificado-container {
         position: absolute;
-        left: 0;
         top: 0;
-        width: 100vw;
-        height: 100vh;
+        left: 0;
     }
 
     #painel-controle, .marca {
@@ -187,7 +155,9 @@ h1 {
 <div class="marca">Sistema desenvolvido por StartStatic</div>
 
 <div id="painel-controle">
-    <label style="font-size: 11px; font-weight: bold; color: #d35400;">PAINEL STUDIO FÊNIX:</label>
+    <label style="font-size: 11px; font-weight: bold; color: #d35400;">
+        PAINEL STUDIO FÊNIX:
+    </label>
 
     <input type="file" id="uploadLogo" accept="image/*" onchange="carregarLogo(event)">
     <input type="text" id="inNome" placeholder="Nome da Aluna" oninput="atualizar()">
@@ -196,49 +166,59 @@ h1 {
     <input type="text" id="inData" placeholder="Cidade, Data e Ano" oninput="atualizar()">
     <input type="text" id="inHoras" placeholder="Carga Horária (Ex: 08 Horas)" oninput="atualizar()">
 
-    <button class="btn-gerar" id="btnSalvar">SALVAR PDF / IMPRIMIR</button>
+    <button class="btn-gerar" id="btnSalvar">
+        SALVAR PDF / IMPRIMIR
+    </button>
 </div>
 
 <div class="certificado-container">
     <div class="borda-principal">
-
-        <div class="logo-box">
-            <!-- LOGO PADRÃO (GITHUB OU LOCAL) -->
-            <img id="logo-preview" src="https://raw.githubusercontent.com/seuusuario/seurepo/main/logo-fenix.png">
-        </div>
-
         <div class="borda-interna">
 
-            <div>
-                <div style="font-size: 18px; font-weight: 600;">STUDIO FÊNIX - TREINAMENTO INTEGRADO</div>
-                <div style="font-size: 11px;">CNPJ: 14.553.773/0001-00</div>
+            <!-- TOPO -->
+            <div class="topo-certificado">
+                <div>
+                    <div style="font-size: 16px; font-weight: 600;">
+                        STUDIO FÊNIX - TREINAMENTO INTEGRADO
+                    </div>
+                    <div style="font-size: 11px;">
+                        CNPJ: 14.553.773/0001-00
+                    </div>
+                </div>
+
+                <div class="logo-box">
+                    <img id="logo-preview" src="logo-fenix.png">
+                </div>
             </div>
 
+            <!-- CONTEÚDO -->
             <div>
                 <h1>Certificado</h1>
-                <div style="font-size: 26px;">de Participação</div>
+                <div>de Participação</div>
 
-                <div style="margin-top: 20px;">Certificamos com orgulho que</div>
+                <p>Certificamos com orgulho que</p>
 
                 <div class="nome-destaque" id="dN">NOME DA ALUNA</div>
 
-                <div>portador(a) do CPF: <span id="dC">XXX.XXX.XXX-XX</span></div>
+                <p>portador(a) do CPF: <span id="dC">XXX.XXX.XXX-XX</span></p>
 
-                <div style="margin-top: 10px;">concluiu com êxito o curso de</div>
+                <p>concluiu com êxito o curso de</p>
 
-                <div style="font-size: 30px; color: #d35400;" id="dCr">NOME DO CURSO</div>
+                <div style="color:#d35400; font-size: 26px;" id="dCr">
+                    NOME DO CURSO
+                </div>
 
                 <div class="info-curso">
-                    Realizado em <span id="dD">________</span>,
+                    Realizado em <span id="dD">____</span>,
                     com carga horária total de <span id="dH">__ horas</span>.
                 </div>
             </div>
 
-            <div class="rodape">
-                <div class="linha-assinatura">
-                    <b>SANDRA ISABEL FERRADA FLORES</b><br>
-                    Cref: 071355-G/SP - Licenciatura Plena
-                </div>
+            <!-- RODAPÉ -->
+            <div>
+                <hr style="width:60%;">
+                <b>SANDRA ISABEL FERRADA FLORES</b><br>
+                Cref: 071355-G/SP - Licenciatura Plena
             </div>
 
         </div>
@@ -251,16 +231,23 @@ document.addEventListener('DOMContentLoaded', function () {
     const btn = document.getElementById('btnSalvar');
 
     btn.addEventListener('click', function () {
+
         btn.innerText = "GERANDO PDF...";
+
         setTimeout(() => {
-            window.print();
+            try {
+                window.print();
+            } catch (e) {
+                alert("Use o menu do navegador → Imprimir");
+            }
             btn.innerText = "SALVAR PDF / IMPRIMIR";
         }, 300);
+
     });
 
 });
 
-/* ATUALIZAÇÃO DOS CAMPOS */
+/* ATUALIZAÇÃO */
 function atualizar() {
     document.getElementById('dN').innerText =
         (document.getElementById('inNome').value || 'NOME DA ALUNA').toUpperCase();
@@ -272,13 +259,13 @@ function atualizar() {
         (document.getElementById('inCurso').value || 'NOME DO CURSO').toUpperCase();
 
     document.getElementById('dD').innerText =
-        document.getElementById('inData').value || '________';
+        document.getElementById('inData').value || '____';
 
     document.getElementById('dH').innerText =
         document.getElementById('inHoras').value || '__ horas';
 }
 
-/* FORMATAR CPF */
+/* CPF */
 function formatarCPF(cpf) {
     return cpf
         .replace(/\D/g, '')
@@ -287,13 +274,12 @@ function formatarCPF(cpf) {
         .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
 }
 
-/* UPLOAD LOGO */
+/* LOGO */
 function carregarLogo(event) {
     const reader = new FileReader();
     reader.onload = function () {
         document.getElementById('logo-preview').src = reader.result;
     };
-
     if (event.target.files[0]) {
         reader.readAsDataURL(event.target.files[0]);
     }
