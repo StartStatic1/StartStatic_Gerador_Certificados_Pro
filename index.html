@@ -1,149 +1,1079 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador Studio Fênix - StartStatic</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <style>
-        * { box-sizing: border-box; -webkit-print-color-adjust: exact; }
-        body { font-family: 'Montserrat', sans-serif; background-color: #f0f2f5; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio Fênix — Gerador de Certificados Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --fenix-orange: #C8511A;
+    --fenix-gold: #B8860B;
+    --fenix-gold-light: #DAA520;
+    --fenix-dark: #1A1A2E;
+    --fenix-cream: #FAF7F2;
+    --fenix-warm: #F5ECD7;
+    --panel-bg: #16213E;
+    --panel-accent: #C8511A;
+    --input-bg: #0F3460;
+    --text-light: #E8E0D5;
+  }
 
-        /* PAINEL DE CONTROLE - SEM ADS */
-        #painel-controle { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 12px; }
-        #painel-controle input { padding: 12px; border: 1px solid #ccc; border-radius: 5px; width: 100%; font-size: 14px; }
-        .btn-gerar { padding: 18px; background-color: #d35400; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; width: 100%; font-size: 16px; transition: 0.3s; }
-        .btn-gerar:active { background-color: #a04000; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
-        /* AREA DO CERTIFICADO */
-        .certificado-container { 
-            width: 1120px; 
-            height: 790px; 
-            background: white; 
-            padding: 25px; 
-            position: relative; 
-            display: flex; 
-            flex-direction: column;
-        }
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(135deg, #0a0a1a 0%, #16213E 50%, #0F3460 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 10px 40px;
+  }
 
-        .borda-principal { border: 2px solid #bdc3c7; height: 100%; width: 100%; padding: 12px; position: relative; }
-        .borda-interna { border: 1px solid #d35400; height: 100%; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 40px 50px; text-align: center; }
+  /* ===== HEADER ===== */
+  .app-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    animation: fadeDown 0.6s ease;
+  }
+  .app-header .fenix-icon {
+    width: 56px; height: 56px;
+  }
+  .app-header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 22px;
+    color: var(--fenix-gold-light);
+    letter-spacing: 2px;
+    line-height: 1.2;
+  }
+  .app-header p {
+    font-size: 11px;
+    color: #888;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
 
-        /* LOGO FIXO LATERAL */
-        .logo-box { 
-            position: absolute; 
-            top: 30px; 
-            right: 45px; 
-            width: 160px; 
-            height: 160px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-        }
-        .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  /* ===== PAINEL ===== */
+  #painel {
+    background: rgba(22, 33, 62, 0.95);
+    border: 1px solid rgba(200, 81, 26, 0.3);
+    border-radius: 16px;
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 520px;
+    margin-bottom: 32px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+    animation: fadeUp 0.6s ease 0.1s both;
+  }
 
-        h1 { font-family: 'Playfair Display', serif; font-size: 65px; color: #d35400; margin: 10px 0 0; text-transform: uppercase; }
-        .nome-destaque { font-family: 'Playfair Display', serif; font-size: 44px; font-weight: bold; color: #2c3e50; border-bottom: 2px solid #bdc3c7; margin: 15px 0; min-width: 500px; padding-bottom: 5px; }
+  .painel-titulo {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    color: var(--fenix-orange);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .painel-titulo::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, rgba(200,81,26,0.5), transparent);
+  }
 
-        .info-curso { font-size: 18px; color: #2c3e50; margin-top: 10px; width: 100%; }
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--fenix-gold-light);
+    margin: 18px 0 8px;
+    opacity: 0.8;
+  }
+  .section-label:first-of-type { margin-top: 0; }
 
-        /* RODAPÉ AJUSTADO PARA NÃO COMER NA ASSINATURA */
-        .rodape { width: 100%; margin-top: 40px; padding-bottom: 30px; }
-        .linha-assinatura { border-top: 1.5px solid #2c3e50; width: 70%; max-width: 600px; margin: 0 auto; padding-top: 15px; }
-        .especialidades-texto { font-size: 12px; color: #5a6667; text-transform: uppercase; margin-top: 10px; line-height: 1.6; font-weight: 500; }
+  .campo-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
 
-        /* PREVIEW NO CELULAR */
-        @media screen and (max-width: 1100px) {
-            .certificado-container { transform: scale(0.3); transform-origin: top center; margin-bottom: -540px; }
-        }
+  .campo-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
 
-        /* AJUSTE PARA SALVAR COMO ISO A4 */
-        @media print {
-            @page { size: landscape; margin: 0; }
-            body { padding: 0; background: white; }
-            #painel-controle { display: none !important; }
-            .certificado-container { transform: none !important; width: 100vw; height: 100vh; border: none; padding: 12mm; }
-        }
-    </style>
+  label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(232, 224, 213, 0.6);
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  input[type="text"], textarea, select {
+    width: 100%;
+    background: rgba(15, 52, 96, 0.6);
+    border: 1px solid rgba(200, 81, 26, 0.25);
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-size: 13px;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--text-light);
+    transition: all 0.25s;
+    outline: none;
+  }
+  input[type="text"]:focus, textarea:focus, select:focus {
+    border-color: var(--fenix-orange);
+    background: rgba(15, 52, 96, 0.9);
+    box-shadow: 0 0 0 3px rgba(200,81,26,0.15);
+  }
+  input[type="text"]::placeholder, textarea::placeholder {
+    color: rgba(232,224,213,0.3);
+  }
+  select option { background: #16213E; color: white; }
+
+  textarea {
+    resize: vertical;
+    min-height: 64px;
+    line-height: 1.5;
+  }
+
+  .upload-area {
+    border: 2px dashed rgba(200,81,26,0.3);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+  }
+  .upload-area:hover { border-color: var(--fenix-orange); background: rgba(200,81,26,0.05); }
+  .upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+  .upload-area .icon { font-size: 22px; margin-bottom: 4px; }
+  .upload-area p { font-size: 11px; color: rgba(232,224,213,0.5); }
+  .upload-area.has-file p { color: var(--fenix-gold-light); }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(200,81,26,0.3), transparent);
+    margin: 22px 0;
+  }
+
+  .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 22px; }
+
+  .btn {
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #C8511A, #E8640A);
+    color: white;
+    box-shadow: 0 4px 20px rgba(200,81,26,0.4);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(200,81,26,0.5); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-secondary {
+    background: rgba(184,134,11,0.15);
+    border: 1px solid rgba(218,165,32,0.4);
+    color: var(--fenix-gold-light);
+  }
+  .btn-secondary:hover { background: rgba(184,134,11,0.25); border-color: var(--fenix-gold-light); }
+
+  .btn-full {
+    grid-column: 1 / -1;
+    padding: 16px;
+    background: linear-gradient(135deg, #1a3a6e, #0F3460);
+    border: 1px solid rgba(218,165,32,0.3);
+    color: var(--fenix-gold-light);
+    letter-spacing: 2px;
+  }
+  .btn-full:hover { border-color: var(--fenix-gold-light); box-shadow: 0 4px 20px rgba(184,134,11,0.2); }
+
+  .spinner { display: none; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
+
+  /* ===== TOGGLE TIPO ===== */
+  .tipo-toggle {
+    display: flex;
+    background: rgba(15,52,96,0.4);
+    border-radius: 8px;
+    border: 1px solid rgba(200,81,26,0.2);
+    overflow: hidden;
+  }
+  .tipo-toggle button {
+    flex: 1;
+    padding: 9px 6px;
+    border: none;
+    background: transparent;
+    color: rgba(232,224,213,0.5);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tipo-toggle button.active {
+    background: var(--fenix-orange);
+    color: white;
+  }
+
+  /* ===== PREVIEW WRAPPER ===== */
+  .preview-wrapper {
+    width: 100%;
+    max-width: 900px;
+    animation: fadeUp 0.6s ease 0.2s both;
+  }
+  .preview-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(200,81,26,0.6);
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .preview-scaler {
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  }
+
+  /* ===== CERTIFICADO ===== */
+  #certificado {
+    width: 1122px;
+    height: 794px;
+    background: var(--fenix-cream);
+    position: relative;
+    overflow: hidden;
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  /* Ornamentos de fundo */
+  #certificado::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 10% 15%, rgba(200,81,26,0.04) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 90% 85%, rgba(184,134,11,0.06) 0%, transparent 70%);
+  }
+
+  .cert-bg-watermark {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.025;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .cert-bg-watermark svg { width: 500px; height: 500px; }
+
+  /* Borda dupla elegante */
+  .cert-frame-outer {
+    position: absolute;
+    inset: 18px;
+    border: 1.5px solid rgba(184,134,11,0.6);
+  }
+  .cert-frame-inner {
+    position: absolute;
+    inset: 26px;
+    border: 0.5px solid rgba(184,134,11,0.3);
+  }
+
+  /* Ornamentos dos cantos */
+  .corner {
+    position: absolute;
+    width: 44px;
+    height: 44px;
+  }
+  .corner svg { width: 100%; height: 100%; }
+  .corner-tl { top: 13px; left: 13px; }
+  .corner-tr { top: 13px; right: 13px; transform: scaleX(-1); }
+  .corner-bl { bottom: 13px; left: 13px; transform: scaleY(-1); }
+  .corner-br { bottom: 13px; right: 13px; transform: scale(-1); }
+
+  /* Linha dourada superior */
+  .cert-top-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(to right, #8B6914, #DAA520, #C8511A, #DAA520, #8B6914);
+  }
+
+  /* Linha dourada inferior */
+  .cert-bottom-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(to right, #8B6914, #DAA520, #C8511A, #DAA520, #8B6914);
+  }
+
+  /* Logo */
+  .cert-logo {
+    position: absolute;
+    top: 42px;
+    right: 60px;
+    width: 110px;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cert-logo img, .cert-logo svg {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  /* Conteúdo principal */
+  .cert-body {
+    position: absolute;
+    inset: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 48px 80px 36px;
+    text-align: center;
+  }
+
+  .cert-header { width: 100%; }
+
+  .cert-studio-name {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    color: #3D2B1F;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .cert-cnpj {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    color: #999;
+    letter-spacing: 1.5px;
+  }
+
+  /* Ornamento separador */
+  .cert-ornament {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 14px 0 10px;
+    width: 80%;
+  }
+  .cert-ornament-line {
+    flex: 1;
+    height: 0.5px;
+    background: linear-gradient(to right, transparent, rgba(184,134,11,0.5));
+  }
+  .cert-ornament-line.right {
+    background: linear-gradient(to left, transparent, rgba(184,134,11,0.5));
+  }
+  .cert-ornament-diamond {
+    width: 8px; height: 8px;
+    background: var(--fenix-orange);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+  .cert-ornament-sm { width: 5px; height: 5px; background: var(--fenix-gold); transform: rotate(45deg); flex-shrink: 0; opacity: 0.6; }
+
+  /* Título CERTIFICADO */
+  .cert-titulo-wrapper { position: relative; }
+  .cert-titulo {
+    font-family: 'Cinzel', serif;
+    font-size: 62px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 6px;
+    background: linear-gradient(135deg, #8B4513 0%, #C8511A 40%, #DAA520 70%, #C8511A 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-transform: uppercase;
+  }
+  .cert-subtitulo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-style: italic;
+    color: #7a6a5a;
+    letter-spacing: 3px;
+    margin-top: 4px;
+  }
+
+  /* Corpo */
+  .cert-content { width: 100%; }
+
+  .cert-certifica {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    color: #5a4a3a;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+
+  .cert-nome {
+    font-family: 'Cinzel', serif;
+    font-size: 38px;
+    font-weight: 700;
+    color: #1A1A2E;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    position: relative;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+  }
+  .cert-nome::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--fenix-gold-light), var(--fenix-orange), var(--fenix-gold-light), transparent);
+  }
+
+  .cert-cpf-row {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    color: #5a4a3a;
+    margin: 6px 0;
+  }
+  .cert-cpf-val {
+    font-weight: 700;
+    color: #3D2B1F;
+  }
+
+  .cert-concluiu {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    color: #5a4a3a;
+    margin: 6px 0;
+    font-style: italic;
+  }
+
+  .cert-curso {
+    font-family: 'Cinzel', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--fenix-orange);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 8px 0 6px;
+    line-height: 1.25;
+  }
+
+  .cert-detalhes {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    color: #6a5a4a;
+    margin-top: 4px;
+  }
+
+  /* Rodapé */
+  .cert-footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 60px;
+    margin-top: auto;
+  }
+
+  .cert-assinatura {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .cert-assinatura-linha {
+    width: 260px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #3D2B1F 20%, #3D2B1F 80%, transparent);
+    margin-bottom: 10px;
+  }
+  .cert-ass-nome {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1A1A2E;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+  .cert-ass-cref {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9.5px;
+    color: #7a6a5a;
+    margin-top: 3px;
+    text-align: center;
+  }
+  .cert-ass-esp {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 8.5px;
+    color: #9a8a7a;
+    margin-top: 5px;
+    text-align: center;
+    line-height: 1.7;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Selo */
+  .cert-selo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .cert-selo-ring {
+    width: 74px; height: 74px;
+    border-radius: 50%;
+    border: 2px solid var(--fenix-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+    background: radial-gradient(circle, rgba(250,247,242,1) 0%, rgba(240,230,210,0.8) 100%);
+  }
+  .cert-selo-ring::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    border: 0.5px solid rgba(184,134,11,0.4);
+  }
+  .cert-selo-text {
+    font-family: 'Cinzel', serif;
+    font-size: 6.5px;
+    color: var(--fenix-gold);
+    letter-spacing: 1px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  .cert-selo-year {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--fenix-orange);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ===== RESPONSIVO PREVIEW ===== */
+  .preview-scaler {
+    width: 100%;
+  }
+  #cert-scale-container {
+    transform-origin: top left;
+  }
+
+  /* ===== ANIMAÇÕES ===== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ===== PRINT ===== */
+  @media print {
+    @page { size: A4 landscape; margin: 0; }
+    body { background: white; padding: 0; display: block; }
+    #painel, .app-header, .preview-label, .btn-row { display: none !important; }
+    .preview-wrapper { max-width: 100%; }
+    .preview-scaler { box-shadow: none; border-radius: 0; }
+    #cert-scale-container { transform: none !important; }
+    #certificado { width: 100vw !important; height: 100vh !important; }
+  }
+
+  /* Toast notification */
+  .toast {
+    position: fixed;
+    bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: rgba(22,33,62,0.97);
+    border: 1px solid var(--fenix-orange);
+    color: var(--text-light);
+    padding: 14px 24px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: 'Montserrat', sans-serif;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    z-index: 9999;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .char-count {
+    font-size: 9px;
+    color: rgba(232,224,213,0.35);
+    text-align: right;
+    margin-top: 2px;
+  }
+</style>
 </head>
 <body>
 
-    <div id="painel-controle">
-        <label style="font-size: 11px; font-weight: bold; color: #d35400;">PAINEL STUDIO FÊNIX:</label>
-        <input type="file" id="uploadLogo" accept="image/*" onchange="carregarLogo(event)">
-        <input type="text" id="inNome" placeholder="Nome da Aluna" oninput="atualizar()">
-        <input type="text" id="inCPF" placeholder="CPF da Aluna" oninput="atualizar()">
-        <input type="text" id="inCurso" placeholder="Nome do Curso" oninput="atualizar()">
-        <input type="text" id="inData" placeholder="Cidade, Data e Ano" oninput="atualizar()">
-        <input type="text" id="inHoras" placeholder="Carga Horária (Ex: 08 Horas)" oninput="atualizar()">
-        <button class="btn-gerar" id="btnSalvar">SALVAR PDF / IMPRIMIR</button>
+<!-- HEADER -->
+<div class="app-header">
+  <svg class="fenix-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="50" cy="72" rx="18" ry="10" fill="#C8511A" opacity="0.3"/>
+    <path d="M50 15 C30 25, 15 45, 22 62 C28 76, 45 82, 50 88 C55 82, 72 76, 78 62 C85 45, 70 25, 50 15Z" fill="url(#g1)"/>
+    <path d="M35 30 C25 20, 12 28, 18 48 C22 60, 35 65, 45 70 C40 58, 38 42, 35 30Z" fill="#DAA520" opacity="0.7"/>
+    <path d="M65 30 C75 20, 88 28, 82 48 C78 60, 65 65, 55 70 C60 58, 62 42, 65 30Z" fill="#DAA520" opacity="0.7"/>
+    <path d="M50 20 C42 32, 40 50, 50 88 C60 50, 58 32, 50 20Z" fill="#E8640A" opacity="0.5"/>
+    <path d="M50 40 C44 48, 43 60, 50 88 C57 60, 56 48, 50 40Z" fill="#C8511A" opacity="0.8"/>
+    <circle cx="50" cy="35" r="5" fill="#FFD700" opacity="0.9"/>
+    <defs>
+      <linearGradient id="g1" x1="50" y1="15" x2="50" y2="88" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#FFD700"/>
+        <stop offset="40%" stop-color="#E8640A"/>
+        <stop offset="100%" stop-color="#8B2500"/>
+      </linearGradient>
+    </defs>
+  </svg>
+  <div>
+    <h1>Studio Fênix</h1>
+    <p>Gerador de Certificados Pro</p>
+  </div>
+</div>
+
+<!-- PAINEL DE CONTROLE -->
+<div id="painel">
+  <div class="painel-titulo">⚡ Painel de Edição</div>
+
+  <!-- Tipo de Certificado -->
+  <div class="section-label">Tipo de Certificado</div>
+  <div class="tipo-toggle">
+    <button class="active" onclick="setTipo('Participação', this)">Participação</button>
+    <button onclick="setTipo('Conclusão', this)">Conclusão</button>
+    <button onclick="setTipo('Excelência', this)">Excelência</button>
+    <button onclick="setTipo('Habilitação', this)">Habilitação</button>
+  </div>
+
+  <!-- Aluna -->
+  <div class="section-label" style="margin-top:18px">Dados da Aluna</div>
+  <div class="campo-group">
+    <div>
+      <label>Nome da Aluna</label>
+      <input type="text" id="inNome" placeholder="Nome completo" oninput="atualizar()" maxlength="60">
     </div>
+    <div>
+      <label>CPF</label>
+      <input type="text" id="inCPF" placeholder="000.000.000-00" oninput="formatarCPF(this); atualizar()" maxlength="14">
+    </div>
+  </div>
 
-    <div class="certificado-container">
-        <div class="borda-principal">
-            <div class="logo-box">
-                <img id="logo-preview" src="./logo-fenix.png">
-            </div>
-            
-            <div class="borda-interna">
-                <div class="cabecalho">
-                    <div style="font-size: 18px; font-weight: 600; letter-spacing: 1px;">STUDIO FÊNIX - TREINAMENTO INTEGRADO</div>
-                    <div style="font-size: 11px; color: #7f8c8d;">CNPJ: 14.553.773/0001-00</div>
-                </div>
+  <!-- Curso -->
+  <div class="section-label">Curso</div>
+  <div class="campo-group">
+    <div>
+      <label>Nome do Curso</label>
+      <input type="text" id="inCurso" placeholder="Ex: Pilates Terapêutico Avançado" oninput="atualizar()" maxlength="80">
+      <div class="char-count" id="cursoCount">0 / 80</div>
+    </div>
+    <div class="campo-row">
+      <div>
+        <label>Carga Horária</label>
+        <input type="text" id="inHoras" placeholder="Ex: 40" oninput="atualizar()" maxlength="10">
+      </div>
+      <div>
+        <label>Data de Realização</label>
+        <input type="text" id="inData" placeholder="dd/mm/aaaa" oninput="atualizar()" maxlength="20">
+      </div>
+    </div>
+    <div>
+      <label>Cidade</label>
+      <input type="text" id="inCidade" placeholder="São Paulo, SP" oninput="atualizar()" maxlength="40">
+    </div>
+  </div>
 
-                <div>
-                    <h1>Certificado</h1>
-                    <div style="font-size: 26px; color: #7f8c8d;">de Participação</div>
-                    <div style="font-size: 22px; margin: 30px 0 10px;">Certificamos com orgulho que</div>
-                    <div class="nome-destaque" id="dN">NOME DA ALUNA</div>
-                    <div style="font-size: 21px;">portador(a) do CPF: <span id="dC" style="font-weight: 600;">XXX.XXX.XXX-XX</span>,</div>
-                    <div style="font-size: 21px; margin-top: 12px;">concluiu com êxito a participação no</div>
-                    <div style="font-size: 36px; font-weight: bold; color: #d35400; text-transform: uppercase;" id="dCr">NOME DO CURSO</div>
-                    
-                    <div class="info-curso">
-                        Realizado em <span id="dD">____________________</span>, com carga horária total de <span id="dH">__ horas</span>.
-                    </div>
-                </div>
+  <div class="divider"></div>
 
-                <div class="rodape">
-                    <div class="linha-assinatura">
-                        <span style="font-weight: bold; font-size: 21px; color: #2c3e50;">SANDRA ISABEL FERRADA FLORES</span><br>
-                        <span style="font-size: 15px;">Cref: 071355-G/SP - Licenciatura Plena em Educação Física</span>
-                        <div class="especialidades-texto">
-                            Especialista em Treinamento Funcional • Medicina do Esporte<br>
-                            Pilates: Abordagem Multidisciplinar • Traumato-Ortopédica
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <!-- Assinatura -->
+  <div class="section-label">Assinatura</div>
+  <div class="campo-group">
+    <div>
+      <label>Nome do(a) Responsável</label>
+      <input type="text" id="inAssNome" value="SANDRA ISABEL FERRADA FLORES" oninput="atualizar()" maxlength="60">
+    </div>
+    <div>
+      <label>Credencial / Registro</label>
+      <input type="text" id="inAssCref" value="Cref: 071355-G/SP · Licenciatura Plena em Educação Física" oninput="atualizar()" maxlength="80">
+    </div>
+    <div>
+      <label>Especialidades</label>
+      <textarea id="inAssEsp" oninput="atualizar()" maxlength="200">Especialista em Treinamento Funcional · Medicina do Esporte
+Pilates: Abordagem Multidisciplinar · Traumato-Ortopédica</textarea>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Logo -->
+  <div class="section-label">Logo (opcional)</div>
+  <div class="upload-area" id="uploadArea">
+    <input type="file" accept="image/*" onchange="carregarLogo(event)">
+    <div class="icon">🦅</div>
+    <p id="uploadTxt">Enviar logo personalizada · PNG recomendado</p>
+  </div>
+
+  <!-- Botões -->
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="limpar()">🗑 Limpar</button>
+    <button class="btn btn-secondary" onclick="resetLogo()">↺ Logo padrão</button>
+    <button class="btn btn-primary" onclick="gerarPDF()" id="btnPDF">
+      <span class="spinner" id="spinner"></span>
+      <span id="btnTxt">⬇ Baixar PDF</span>
+    </button>
+    <button class="btn btn-primary" onclick="window.print()">🖨 Imprimir</button>
+  </div>
+</div>
+
+<!-- PREVIEW -->
+<div class="preview-wrapper">
+  <div class="preview-label">✦ PRÉVIA DO CERTIFICADO ✦</div>
+  <div class="preview-scaler">
+    <div id="cert-scale-container">
+
+      <!-- ======= CERTIFICADO ======= -->
+      <div id="certificado">
+
+        <!-- Barras douradas -->
+        <div class="cert-top-bar"></div>
+        <div class="cert-bottom-bar"></div>
+
+        <!-- Bordas -->
+        <div class="cert-frame-outer"></div>
+        <div class="cert-frame-inner"></div>
+
+        <!-- Cantos ornamentais -->
+        <div class="corner corner-tl">
+          <svg viewBox="0 0 44 44" fill="none"><path d="M2 42 L2 8 Q2 2 8 2 L42 2" stroke="#B8860B" stroke-width="1.5" fill="none"/><path d="M2 42 L2 22 Q2 12 12 12 L42 12" stroke="#B8860B" stroke-width="0.5" fill="none" opacity="0.5"/><circle cx="7" cy="7" r="2.5" fill="#C8511A" opacity="0.7"/><circle cx="14" cy="14" r="1.5" fill="#B8860B" opacity="0.5"/></svg>
         </div>
+        <div class="corner corner-tr">
+          <svg viewBox="0 0 44 44" fill="none"><path d="M2 42 L2 8 Q2 2 8 2 L42 2" stroke="#B8860B" stroke-width="1.5" fill="none"/><path d="M2 42 L2 22 Q2 12 12 12 L42 12" stroke="#B8860B" stroke-width="0.5" fill="none" opacity="0.5"/><circle cx="7" cy="7" r="2.5" fill="#C8511A" opacity="0.7"/><circle cx="14" cy="14" r="1.5" fill="#B8860B" opacity="0.5"/></svg>
+        </div>
+        <div class="corner corner-bl">
+          <svg viewBox="0 0 44 44" fill="none"><path d="M2 42 L2 8 Q2 2 8 2 L42 2" stroke="#B8860B" stroke-width="1.5" fill="none"/><path d="M2 42 L2 22 Q2 12 12 12 L42 12" stroke="#B8860B" stroke-width="0.5" fill="none" opacity="0.5"/><circle cx="7" cy="7" r="2.5" fill="#C8511A" opacity="0.7"/><circle cx="14" cy="14" r="1.5" fill="#B8860B" opacity="0.5"/></svg>
+        </div>
+        <div class="corner corner-br">
+          <svg viewBox="0 0 44 44" fill="none"><path d="M2 42 L2 8 Q2 2 8 2 L42 2" stroke="#B8860B" stroke-width="1.5" fill="none"/><path d="M2 42 L2 22 Q2 12 12 12 L42 12" stroke="#B8860B" stroke-width="0.5" fill="none" opacity="0.5"/><circle cx="7" cy="7" r="2.5" fill="#C8511A" opacity="0.7"/><circle cx="14" cy="14" r="1.5" fill="#B8860B" opacity="0.5"/></svg>
+        </div>
+
+        <!-- Watermark Fênix -->
+        <div class="cert-bg-watermark">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50 15 C30 25, 15 45, 22 62 C28 76, 45 82, 50 88 C55 82, 72 76, 78 62 C85 45, 70 25, 50 15Z" fill="#C8511A"/>
+            <path d="M35 30 C25 20, 12 28, 18 48 C22 60, 35 65, 45 70 C40 58, 38 42, 35 30Z" fill="#DAA520"/>
+            <path d="M65 30 C75 20, 88 28, 82 48 C78 60, 65 65, 55 70 C60 58, 62 42, 65 30Z" fill="#DAA520"/>
+            <circle cx="50" cy="35" r="7" fill="#FFD700"/>
+          </svg>
+        </div>
+
+        <!-- Logo -->
+        <div class="cert-logo" id="certLogoBox">
+          <!-- Logo SVG padrão da Fênix -->
+          <svg id="certLogoSvg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+            <ellipse cx="60" cy="95" rx="28" ry="12" fill="#C8511A" opacity="0.2"/>
+            <path d="M60 8 C32 22, 12 50, 22 74 C30 92, 52 102, 60 112 C68 102, 90 92, 98 74 C108 50, 88 22, 60 8Z" fill="url(#lg1)"/>
+            <path d="M40 28 C26 16, 8 26, 16 54 C22 70, 40 78, 52 86 C46 70, 44 48, 40 28Z" fill="#DAA520" opacity="0.75"/>
+            <path d="M80 28 C94 16, 112 26, 104 54 C98 70, 80 78, 68 86 C74 70, 76 48, 80 28Z" fill="#DAA520" opacity="0.75"/>
+            <path d="M60 18 C50 36, 48 60, 60 112 C72 60, 70 36, 60 18Z" fill="#E8640A" opacity="0.45"/>
+            <path d="M60 48 C52 58, 51 74, 60 112 C69 74, 68 58, 60 48Z" fill="#C8511A" opacity="0.85"/>
+            <circle cx="60" cy="38" r="7" fill="#FFD700" opacity="0.95"/>
+            <circle cx="60" cy="38" r="3.5" fill="#FFF8E1"/>
+            <defs>
+              <linearGradient id="lg1" x1="60" y1="8" x2="60" y2="112" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#FFD700"/>
+                <stop offset="35%" stop-color="#E8640A"/>
+                <stop offset="100%" stop-color="#8B1500"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <img id="certLogoImg" src="" style="display:none;max-width:100%;max-height:100%;object-fit:contain;">
+        </div>
+
+        <!-- Corpo -->
+        <div class="cert-body">
+
+          <!-- Cabeçalho -->
+          <div class="cert-header">
+            <div class="cert-studio-name">STUDIO FÊNIX · TREINAMENTO INTEGRADO</div>
+            <div class="cert-cnpj">CNPJ: 14.553.773/0001-00</div>
+          </div>
+
+          <!-- Ornamento -->
+          <div class="cert-ornament">
+            <div class="cert-ornament-line"></div>
+            <div class="cert-ornament-sm"></div>
+            <div class="cert-ornament-diamond"></div>
+            <div class="cert-ornament-sm"></div>
+            <div class="cert-ornament-line right"></div>
+          </div>
+
+          <!-- Título -->
+          <div class="cert-titulo-wrapper">
+            <div class="cert-titulo">CERTIFICADO</div>
+            <div class="cert-subtitulo" id="dTipo">de Participação</div>
+          </div>
+
+          <!-- Ornamento -->
+          <div class="cert-ornament">
+            <div class="cert-ornament-line"></div>
+            <div class="cert-ornament-sm"></div>
+            <div class="cert-ornament-diamond"></div>
+            <div class="cert-ornament-sm"></div>
+            <div class="cert-ornament-line right"></div>
+          </div>
+
+          <!-- Conteúdo -->
+          <div class="cert-content">
+            <div class="cert-certifica">Certificamos com orgulho que</div>
+            <div class="cert-nome" id="dN">NOME DA ALUNA</div>
+            <div class="cert-cpf-row">
+              portador(a) do CPF: <span class="cert-cpf-val" id="dC">000.000.000-00</span>
+            </div>
+            <div class="cert-concluiu" id="dConcluiu">concluiu com êxito a participação no</div>
+            <div class="cert-curso" id="dCr">NOME DO CURSO</div>
+            <div class="cert-detalhes">
+              Realizado em <strong id="dCidade">______</strong>, em <strong id="dD">__/__/____</strong> · Carga horária: <strong id="dH">__ horas</strong>
+            </div>
+          </div>
+
+          <!-- Ornamento antes do rodapé -->
+          <div class="cert-ornament" style="margin-top:6px; margin-bottom:0;">
+            <div class="cert-ornament-line"></div>
+            <div class="cert-ornament-sm"></div>
+            <div class="cert-ornament-diamond"></div>
+            <div class="cert-ornament-sm"></div>
+            <div class="cert-ornament-line right"></div>
+          </div>
+
+          <!-- Rodapé -->
+          <div class="cert-footer">
+            <div class="cert-assinatura">
+              <div class="cert-assinatura-linha"></div>
+              <div class="cert-ass-nome" id="dAssNome">SANDRA ISABEL FERRADA FLORES</div>
+              <div class="cert-ass-cref" id="dAssCref">Cref: 071355-G/SP · Licenciatura Plena em Educação Física</div>
+              <div class="cert-ass-esp" id="dAssEsp">Especialista em Treinamento Funcional · Medicina do Esporte<br>Pilates: Abordagem Multidisciplinar · Traumato-Ortopédica</div>
+            </div>
+
+            <div class="cert-selo">
+              <div class="cert-selo-ring">
+                <div class="cert-selo-text">STUDIO<br>FÊNIX</div>
+                <div class="cert-selo-year" id="dAno">2025</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <!-- ======= FIM CERTIFICADO ======= -->
+
     </div>
+  </div>
+</div>
 
-    <script>
-        // FUNÇÃO DE IMPRESSÃO DIRETA PARA EVITAR BLOQUEIOS
-        document.getElementById('btnSalvar').addEventListener('click', function() {
-            window.print();
-        });
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
-        function atualizar() {
-            document.getElementById('dN').innerText = (document.getElementById('inNome').value || 'NOME DA ALUNA').toUpperCase();
-            document.getElementById('dC').innerText = document.getElementById('inCPF').value || 'XXX.XXX.XXX-XX';
-            document.getElementById('dCr').innerText = (document.getElementById('inCurso').value || 'NOME DO CURSO').toUpperCase();
-            document.getElementById('dD').innerText = document.getElementById('inData').value || '____________________';
-            document.getElementById('dH').innerText = document.getElementById('inHoras').value || '__ horas';
-        }
+<script>
+  // ===== ESCALA RESPONSIVA =====
+  function ajustarEscala() {
+    const container = document.getElementById('cert-scale-container');
+    const wrapper = document.querySelector('.preview-scaler');
+    const certW = 1122;
+    const wrapW = wrapper.offsetWidth;
+    const scale = Math.min(wrapW / certW, 1);
+    container.style.transform = `scale(${scale})`;
+    container.style.width = `${certW}px`;
+    container.style.height = '794px';
+    wrapper.style.height = `${794 * scale}px`;
+  }
+  window.addEventListener('resize', ajustarEscala);
+  ajustarEscala();
 
-        function carregarLogo(event) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                document.getElementById('logo-preview').src = reader.result;
-            };
-            if(event.target.files[0]) {
-                reader.readAsDataURL(event.target.files[0]);
-            }
-        }
-    </script>
+  // ===== ATUALIZAR CERTIFICADO =====
+  function atualizar() {
+    const nome = document.getElementById('inNome').value.trim();
+    const cpf = document.getElementById('inCPF').value.trim();
+    const curso = document.getElementById('inCurso').value.trim();
+    const horas = document.getElementById('inHoras').value.trim();
+    const data = document.getElementById('inData').value.trim();
+    const cidade = document.getElementById('inCidade').value.trim();
+    const assNome = document.getElementById('inAssNome').value.trim();
+    const assCref = document.getElementById('inAssCref').value.trim();
+    const assEsp = document.getElementById('inAssEsp').value.trim();
+
+    document.getElementById('dN').textContent = nome.toUpperCase() || 'NOME DA ALUNA';
+    document.getElementById('dC').textContent = cpf || '000.000.000-00';
+    document.getElementById('dCr').textContent = curso.toUpperCase() || 'NOME DO CURSO';
+    document.getElementById('dH').textContent = (horas ? horas + ' horas' : '__ horas');
+    document.getElementById('dD').textContent = data || '__/__/____';
+    document.getElementById('dCidade').textContent = cidade || '______';
+    document.getElementById('dAssNome').textContent = assNome.toUpperCase() || 'NOME DO RESPONSÁVEL';
+    document.getElementById('dAssCref').textContent = assCref;
+    document.getElementById('dAssEsp').innerHTML = assEsp.replace(/\n/g, '<br>');
+
+    // Char count curso
+    const len = document.getElementById('inCurso').value.length;
+    document.getElementById('cursoCount').textContent = len + ' / 80';
+
+    // Ano no selo
+    const ano = new Date().getFullYear();
+    document.getElementById('dAno').textContent = ano;
+  }
+
+  // ===== TIPO =====
+  function setTipo(tipo, btn) {
+    document.querySelectorAll('.tipo-toggle button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('dTipo').textContent = 'de ' + tipo;
+
+    const concluiuMap = {
+      'Participação': 'concluiu com êxito a participação no',
+      'Conclusão': 'concluiu com êxito o curso',
+      'Excelência': 'foi reconhecida com excelência no curso',
+      'Habilitação': 'obteve habilitação completa no',
+    };
+    document.getElementById('dConcluiu').textContent = concluiuMap[tipo] || 'concluiu com êxito a participação no';
+  }
+
+  // ===== CPF MASK =====
+  function formatarCPF(input) {
+    let v = input.value.replace(/\D/g, '').slice(0, 11);
+    v = v.replace(/(\d{3})(\d)/, '$1.$2');
+    v = v.replace(/(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
+    v = v.replace(/(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
+    input.value = v;
+  }
+
+  // ===== LOGO =====
+  function carregarLogo(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('certLogoSvg').style.display = 'none';
+      const img = document.getElementById('certLogoImg');
+      img.src = e.target.result;
+      img.style.display = 'block';
+      document.getElementById('uploadArea').classList.add('has-file');
+      document.getElementById('uploadTxt').textContent = '✓ ' + file.name;
+      toast('Logo carregada com sucesso!');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function resetLogo() {
+    document.getElementById('certLogoSvg').style.display = '';
+    document.getElementById('certLogoImg').style.display = 'none';
+    document.getElementById('certLogoImg').src = '';
+    document.getElementById('uploadArea').classList.remove('has-file');
+    document.getElementById('uploadTxt').textContent = 'Enviar logo personalizada · PNG recomendado';
+    toast('Logo restaurada para padrão Fênix');
+  }
+
+  // ===== LIMPAR =====
+  function limpar() {
+    ['inNome','inCPF','inCurso','inHoras','inData','inCidade'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    atualizar();
+    toast('Campos limpos');
+  }
+
+  // ===== GERAR PDF =====
+  async function gerarPDF() {
+    const btn = document.getElementById('btnPDF');
+    const txt = document.getElementById('btnTxt');
+    const spinner = document.getElementById('spinner');
+
+    btn.disabled = true;
+    txt.textContent = 'Gerando...';
+    spinner.style.display = 'block';
+
+    try {
+      const cert = document.getElementById('certificado');
+      const canvas = await html2canvas(cert, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#FAF7F2',
+        logging: false,
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+      const pW = pdf.internal.pageSize.getWidth();
+      const pH = pdf.internal.pageSize.getHeight();
+      pdf.addImage(imgData, 'JPEG', 0, 0, pW, pH);
+
+      const nomeAluna = (document.getElementById('inNome').value || 'certificado').replace(/\s+/g, '_');
+      const nomeCurso = (document.getElementById('inCurso').value || 'curso').replace(/\s+/g, '_');
+      pdf.save(`Certificado_${nomeAluna}_${nomeCurso}.pdf`);
+
+      toast('✓ PDF baixado com sucesso!');
+    } catch(e) {
+      toast('Erro ao gerar PDF. Tente imprimir.');
+      console.error(e);
+    } finally {
+      btn.disabled = false;
+      txt.textContent = '⬇ Baixar PDF';
+      spinner.style.display = 'none';
+    }
+  }
+
+  // ===== TOAST =====
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // Init
+  atualizar();
+</script>
 </body>
 </html>
