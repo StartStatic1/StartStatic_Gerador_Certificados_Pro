@@ -507,8 +507,8 @@
     justify-content: center;
     align-items: flex-start;
     gap: 36px;
-    margin-top: auto;
-    padding-top: 8px;
+    margin-top: 14px;
+    padding-top: 4px;
     max-width: 900px;
   }
 
@@ -1049,8 +1049,18 @@ Pilates: Abordagem Multidisciplinar · Traumato-Ortopédica</textarea>
   async function capturarCertificado() {
     const original = document.getElementById('certificado');
 
-    // Cria clone limpo, sem a escala visual da prévia e fora da área visível
+    // Aguarda as fontes reais antes de rasterizar para manter a mesma tipografia da prévia.
     await (document.fonts?.ready || Promise.resolve());
+    if (document.fonts?.load) {
+      await Promise.all([
+        document.fonts.load('700 62px Cinzel'),
+        document.fonts.load('700 38px Cinzel'),
+        document.fonts.load('600 26px Cinzel'),
+        document.fonts.load('400 17px Cormorant Garamond'),
+        document.fonts.load('400 13px Montserrat')
+      ]);
+    }
+    // Cria clone limpo, sem a escala visual da prévia e fora da área visível
     const clone = original.cloneNode(true);
     clone.id = 'cert-clone-temp';
     clone.style.cssText = [
@@ -1068,7 +1078,7 @@ Pilates: Abordagem Multidisciplinar · Traumato-Ortopédica</textarea>
     ].join(';');
 
     const captureStyle = document.createElement('style');
-    captureStyle.textContent = '#cert-clone-temp, #cert-clone-temp::before, #cert-clone-temp * { background-image: none !important; } #cert-clone-temp::before { background: #FAF7F2 !important; } #cert-clone-temp .cert-bg-watermark { display: none !important; }';
+    captureStyle.textContent = '#cert-clone-temp, #cert-clone-temp::before, #cert-clone-temp * { background-image: none !important; } #cert-clone-temp::before { background: #FAF7F2 !important; } #cert-clone-temp .cert-bg-watermark { display: none !important; } #cert-clone-temp .cert-titulo { background: none !important; -webkit-text-fill-color: #A6531C !important; color: #A6531C !important; }';
     document.head.appendChild(captureStyle);
     document.body.appendChild(clone);
 
