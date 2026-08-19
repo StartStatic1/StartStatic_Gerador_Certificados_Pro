@@ -616,54 +616,51 @@
   @media print {
     @page {
       size: A4 landscape;
-      margin: 0;
+      margin: 0 !important;
+    }
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
     }
     html, body {
       background: white !important;
       padding: 0 !important;
       margin: 0 !important;
-      display: block !important;
-      width: 100% !important;
-      height: auto !important;
       overflow: hidden !important;
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
     }
-    .app-header,
-    #painel,
-    .preview-label,
-    .btn-row,
-    .toast {
-      display: none !important;
+    /* Esconde tudo, depois mostra só o certificado */
+    body * {
+      visibility: hidden !important;
     }
-    .preview-wrapper {
-      max-width: none !important;
-      width: 100% !important;
-      margin: 0 !important;
-      padding: 0 !important;
-    }
-    .preview-scaler {
-      box-shadow: none !important;
-      border-radius: 0 !important;
-      overflow: visible !important;
-      width: 100% !important;
-      height: auto !important;
-    }
-    #cert-scale-container {
-      transform: none !important;
-      width: 297mm !important;
-      height: 210mm !important;
-      margin: 0 auto !important;
+    #certificado,
+    #certificado * {
+      visibility: visible !important;
     }
     #certificado {
+      position: absolute !important;
+      left: 0 !important;
+      top: 0 !important;
       width: 297mm !important;
       height: 210mm !important;
-      max-width: 100% !important;
-      max-height: 100% !important;
       margin: 0 !important;
+      padding: 0 !important;
       box-shadow: none !important;
-      page-break-inside: avoid !important;
-      break-inside: avoid !important;
+      overflow: hidden !important;
+      transform: none !important;
+      z-index: 99999 !important;
+    }
+    /* Remove scale dos containers pais (sem display:none neles) */
+    .preview-wrapper,
+    .preview-scaler,
+    #cert-scale-container {
+      position: static !important;
+      transform: none !important;
+      width: auto !important;
+      height: auto !important;
+      overflow: visible !important;
+      box-shadow: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
     }
   }
 
@@ -1069,14 +1066,19 @@ Pilates: Abordagem Multidisciplinar · Traumato-Ortopédica</textarea>
   // ===== IMPRIMIR =====
   function imprimir() {
     const container = document.getElementById('cert-scale-container');
+    const cert = document.getElementById('certificado');
     const originalTransform = container.style.transform;
     const originalWidth = container.style.width;
     const originalHeight = container.style.height;
+    const originalCertW = cert.style.width;
+    const originalCertH = cert.style.height;
 
-    // Remove scale para impressão correta
+    // Remove scale e força tamanho real
     container.style.transform = 'none';
     container.style.width = '1122px';
     container.style.height = '794px';
+    cert.style.width = '1122px';
+    cert.style.height = '794px';
 
     setTimeout(() => {
       window.print();
@@ -1085,9 +1087,11 @@ Pilates: Abordagem Multidisciplinar · Traumato-Ortopédica</textarea>
         container.style.transform = originalTransform;
         container.style.width = originalWidth;
         container.style.height = originalHeight;
+        cert.style.width = originalCertW;
+        cert.style.height = originalCertH;
         ajustarEscala();
-      }, 800);
-    }, 80);
+      }, 1000);
+    }, 100);
   }
 
   // ===== GERAR PDF =====
