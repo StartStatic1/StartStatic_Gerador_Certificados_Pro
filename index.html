@@ -31,6 +31,7 @@
     flex-direction: column;
     align-items: center;
     padding: 20px 10px 40px;
+    overflow-x: hidden;
   }
 
   /* ===== HEADER ===== */
@@ -361,7 +362,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: 48px 80px 36px;
+    padding: 42px 72px 26px;
     text-align: center;
   }
 
@@ -505,9 +506,10 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    gap: 60px;
+    gap: 36px;
     margin-top: auto;
-    padding-top: 12px;
+    padding-top: 8px;
+    max-width: 900px;
   }
 
   .cert-assinatura {
@@ -517,14 +519,14 @@
     gap: 0;
   }
   .cert-assinatura-linha {
-    width: 260px;
+    width: 230px;
     height: 1px;
     background: linear-gradient(to right, transparent, #3D2B1F 20%, #3D2B1F 80%, transparent);
     margin-bottom: 10px;
   }
   .cert-ass-nome {
     font-family: 'Cinzel', serif;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: #1A1A2E;
     letter-spacing: 1px;
@@ -532,18 +534,18 @@
   }
   .cert-ass-cref {
     font-family: 'Montserrat', sans-serif;
-    font-size: 9.5px;
+    font-size: 8.5px;
     color: #7a6a5a;
     margin-top: 3px;
     text-align: center;
   }
   .cert-ass-esp {
     font-family: 'Montserrat', sans-serif;
-    font-size: 8.5px;
+    font-size: 7.5px;
     color: #9a8a7a;
     margin-top: 5px;
     text-align: center;
-    line-height: 1.7;
+    line-height: 1.35;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -615,12 +617,13 @@
   /* ===== PRINT (usado só se o navegador imprimir a página direta) ===== */
   @media print {
     @page { size: A4 landscape; margin: 0; }
-    body { background: white !important; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; background: white !important; margin: 0; padding: 0; overflow: hidden !important; }
     .app-header, #painel, .preview-label, .btn-row, .toast { display: none !important; }
     .preview-wrapper, .preview-scaler, #cert-scale-container {
+      display: block !important;
       transform: none !important;
-      width: auto !important;
-      height: auto !important;
+      width: 1122px !important;
+      height: 794px !important;
       box-shadow: none !important;
       overflow: visible !important;
       margin: 0 !important;
@@ -631,7 +634,16 @@
       height: 794px !important;
       transform: none !important;
       box-shadow: none !important;
+      page-break-after: avoid !important;
+      break-after: avoid-page !important;
     }
+  }
+
+  .print-overlay { display:none; }
+  @media print {
+    body.printing-mode > *:not(.print-overlay) { display:none !important; }
+    body.printing-mode .print-overlay { display:block !important; width:297mm; height:210mm; }
+    body.printing-mode .print-overlay img { display:block; width:297mm; height:210mm; object-fit:contain; }
   }
 
   /* Toast notification */
@@ -1033,45 +1045,39 @@ Pilates: Abordagem Multidisciplinar · Traumato-Ortopédica</textarea>
     toast('Campos limpos');
   }
 
-  // ===== CAPTURA DO CERTIFICADO =====
-  // Remove o scale, captura o elemento real, restaura.
-  // No mobile usa scale menor para não estourar memória.
+  // ===== CAPTURA DO CERTIFICADO (clone fora da tela) =====
   async function capturarCertificado() {
-    const container = document.getElementById('cert-scale-container');
-    const cert = document.getElementById('certificado');
-    const wrapper = document.querySelector('.preview-scaler');
+    const original = document.getElementById('certificado');
 
-    const saved = {
-      transform: container.style.transform,
-      width: container.style.width,
-      height: container.style.height,
-      wrapH: wrapper.style.height,
-      overflow: wrapper.style.overflow
-    };
+    // Cria clone limpo, sem a escala visual da prévia e fora da área visível
+    await (document.fonts?.ready || Promise.resolve());
+    const clone = original.cloneNode(true);
+    clone.id = 'cert-clone-temp';
+    clone.style.cssText = [
+      'position: absolute',
+      'left: -100000px',
+      'top: 0',
+      'width: 1122px',
+      'height: 794px',
+      'transform: none',
+      'z-index: 0',
+      'pointer-events: none',
+      'visibility: visible',
+      'overflow: hidden',
+      'background: #FAF7F2'
+    ].join(';');
 
-    // Força tamanho real, sem scale
-    container.style.transform = 'none';
-    container.style.width = '1122px';
-    container.style.height = '794px';
-    wrapper.style.height = '794px';
-    wrapper.style.overflow = 'visible';
+    const captureStyle = document.createElement('style');
+    captureStyle.textContent = '#cert-clone-temp, #cert-clone-temp::before, #cert-clone-temp * { background-image: none !important; } #cert-clone-temp::before { background: #FAF7F2 !important; } #cert-clone-temp .cert-bg-watermark { display: none !important; }';
+    document.head.appendChild(captureStyle);
+    document.body.appendChild(clone);
 
-    // Scroll até o certificado (alguns browsers só renderizam o que está na viewport)
-    cert.scrollIntoView({ block: 'nearest' });
-
-    await new Promise(r => setTimeout(r, 200));
-
-    // Mobile: scale 1.5 | Desktop: scale 2
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
-    const scale = isMobile ? 1.5 : 2;
+    // Espera layout + fontes
+    await new Promise(r => setTimeout(r, 120));
 
     try {
-      if (typeof html2canvas !== 'function') {
-        throw new Error('html2canvas não carregou');
-      }
-
-      const canvas = await html2canvas(cert, {
-        scale: scale,
+      const canvas = await html2canvas(clone, {
+        scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#FAF7F2',
@@ -1080,108 +1086,63 @@ Pilates: Abordagem Multidisciplinar · Traumato-Ortopédica</textarea>
         height: 794,
         windowWidth: 1122,
         windowHeight: 794,
-        imageTimeout: 15000,
-        removeContainer: true
+        onclone: function(doc) {
+          const c = doc.getElementById('cert-clone-temp');
+          if (c) {
+            c.style.transform = 'none';
+            c.style.width = '1122px';
+            c.style.height = '794px';
+          }
+        }
       });
-
-      if (!canvas || canvas.width < 100) {
-        throw new Error('Canvas vazio (' + (canvas ? canvas.width : 0) + 'px)');
-      }
-
       return canvas;
     } finally {
-      container.style.transform = saved.transform;
-      container.style.width = saved.width;
-      container.style.height = saved.height;
-      wrapper.style.height = saved.wrapH;
-      wrapper.style.overflow = saved.overflow;
-      ajustarEscala();
+      // Remove o clone sempre
+      if (clone.parentNode) clone.parentNode.removeChild(clone);
+      if (captureStyle.parentNode) captureStyle.parentNode.removeChild(captureStyle);
     }
   }
 
   // ===== IMPRIMIR =====
   async function imprimir() {
+    // Abre a janela imediatamente: navegadores móveis bloqueiam pop-ups criados depois de await.
+    const win = window.open('', '_blank');
+    if (win) {
+      win.document.write('<!doctype html><html><head><title>Preparando certificado...</title></head><body style="margin:0;font-family:sans-serif;text-align:center;padding:40px">Preparando impressão...</body></html>');
+      win.document.close();
+    }
     toast('Preparando impressão...');
     try {
       const canvas = await capturarCertificado();
-      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+      const imgData = canvas.toDataURL('image/png');
+      if (win && !win.closed) {
+        win.document.open();
+        win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Certificado</title><style>@page{size:A4 landscape;margin:0}html,body{margin:0;padding:0;background:#fff;width:100%;height:100%;overflow:hidden}img{display:block;width:297mm;height:210mm;object-fit:contain;page-break-after:avoid;break-after:avoid-page}</style></head><body><img id="cert-print" src="${imgData}" alt="Certificado"><script>document.getElementById('cert-print').addEventListener('load',function(){setTimeout(function(){window.focus();window.print()},150)})<\/script></body></html>`);
+        win.document.close();
+        return;
+      }
 
-      // Overlay na mesma página (funciona sem pop-up, melhor no mobile)
+      // Fallback quando o navegador bloqueia a nova aba.
       let overlay = document.getElementById('print-overlay');
       if (!overlay) {
         overlay = document.createElement('div');
         overlay.id = 'print-overlay';
+        overlay.className = 'print-overlay';
         document.body.appendChild(overlay);
       }
-
-      overlay.innerHTML = '';
-      const img = document.createElement('img');
-      img.src = imgData;
-      img.alt = 'Certificado';
-      overlay.appendChild(img);
-
-      // CSS de print só para o overlay
-      let style = document.getElementById('print-temp-style');
-      if (!style) {
-        style = document.createElement('style');
-        style.id = 'print-temp-style';
-        document.head.appendChild(style);
-      }
-      style.textContent = `
-        #print-overlay {
-          display: none;
-          position: fixed;
-          inset: 0;
-          background: white;
-          z-index: 999999;
-          margin: 0;
-          padding: 0;
-        }
-        #print-overlay img {
-          width: 100%;
-          height: auto;
-          display: block;
-        }
-        @media print {
-          @page { size: A4 landscape; margin: 0; }
-          body > *:not(#print-overlay) { display: none !important; }
-          #print-overlay {
-            display: block !important;
-            position: static !important;
-            width: 100% !important;
-            height: auto !important;
-          }
-          #print-overlay img {
-            width: 100% !important;
-            height: auto !important;
-            max-width: 100% !important;
-            page-break-inside: avoid;
-          }
-        }
-      `;
-
-      overlay.style.display = 'block';
-
-      // Espera a imagem carregar
-      await new Promise((resolve, reject) => {
-        if (img.complete) return resolve();
-        img.onload = resolve;
-        img.onerror = () => reject(new Error('Falha ao carregar imagem'));
-        setTimeout(() => resolve(), 2000);
-      });
-
-      await new Promise(r => setTimeout(r, 150));
-      window.print();
-
-      // Limpa depois
+      overlay.innerHTML = `<img src="${imgData}" alt="Certificado">`;
+      document.body.classList.add('printing-mode');
       setTimeout(() => {
-        overlay.style.display = 'none';
-        overlay.innerHTML = '';
-      }, 1000);
-
+        window.print();
+        setTimeout(() => {
+          document.body.classList.remove('printing-mode');
+          overlay.innerHTML = '';
+        }, 700);
+      }, 150);
     } catch (e) {
-      console.error('imprimir:', e);
-      toast('Erro: ' + (e.message || 'falha na impressão'));
+      if (win && !win.closed) win.close();
+      console.error(e);
+      toast('Não foi possível preparar a impressão. Tente novamente.');
     }
   }
 
@@ -1196,34 +1157,30 @@ Pilates: Abordagem Multidisciplinar · Traumato-Ortopédica</textarea>
     spinner.style.display = 'block';
 
     try {
-      if (!window.jspdf || !window.jspdf.jsPDF) {
-        throw new Error('jsPDF não carregou');
-      }
-
       const canvas = await capturarCertificado();
-      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+      const imgData = canvas.toDataURL('image/png');
 
+      if (!window.jspdf?.jsPDF) throw new Error('Biblioteca de PDF não carregada');
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF({
         orientation: 'landscape',
         unit: 'mm',
-        format: 'a4',
-        compress: true
+        format: 'a4'
       });
 
       const pW = pdf.internal.pageSize.getWidth();
       const pH = pdf.internal.pageSize.getHeight();
-      pdf.addImage(imgData, 'JPEG', 0, 0, pW, pH);
+      pdf.addImage(imgData, 'PNG', 0, 0, pW, pH, undefined, 'FAST');
 
-      const nomeAluna = (document.getElementById('inNome').value || 'certificado').replace(/[^\w\-]/g, '_');
-      const nomeCurso = (document.getElementById('inCurso').value || 'curso').replace(/[^\w\-]/g, '_');
-      pdf.save('Certificado_' + nomeAluna + '_' + nomeCurso + '.pdf');
+      const limparNomeArquivo = valor => valor.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 60) || 'sem_nome';
+      const nomeAluna = limparNomeArquivo(document.getElementById('inNome').value || 'certificado');
+      const nomeCurso = limparNomeArquivo(document.getElementById('inCurso').value || 'curso');
+      pdf.save(`Certificado_${nomeAluna}_${nomeCurso}.pdf`);
 
       toast('✓ PDF baixado com sucesso!');
     } catch (e) {
-      console.error('gerarPDF:', e);
-      toast('Erro PDF: ' + (e.message || 'desconhecido') + '. Tentando imprimir...');
-      setTimeout(() => imprimir(), 600);
+      console.error(e);
+      toast('Não foi possível gerar o PDF. Verifique se o bloqueador de downloads está ativo.');
     } finally {
       btn.disabled = false;
       txt.textContent = '⬇ Baixar PDF';
