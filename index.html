@@ -360,7 +360,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     padding: 48px 80px 36px;
     text-align: center;
   }
@@ -507,6 +507,7 @@
     align-items: flex-start;
     gap: 60px;
     margin-top: auto;
+    padding-top: 12px;
   }
 
   .cert-assinatura {
@@ -613,13 +614,57 @@
 
   /* ===== PRINT ===== */
   @media print {
-    @page { size: A4 landscape; margin: 0; }
-    body { background: white; padding: 0; display: block; }
-    #painel, .app-header, .preview-label, .btn-row { display: none !important; }
-    .preview-wrapper { max-width: 100%; }
-    .preview-scaler { box-shadow: none; border-radius: 0; }
-    #cert-scale-container { transform: none !important; }
-    #certificado { width: 100vw !important; height: 100vh !important; }
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+    html, body {
+      background: white !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      display: block !important;
+      width: 100% !important;
+      height: auto !important;
+      overflow: hidden !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    .app-header,
+    #painel,
+    .preview-label,
+    .btn-row,
+    .toast {
+      display: none !important;
+    }
+    .preview-wrapper {
+      max-width: none !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    .preview-scaler {
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      overflow: visible !important;
+      width: 100% !important;
+      height: auto !important;
+    }
+    #cert-scale-container {
+      transform: none !important;
+      width: 297mm !important;
+      height: 210mm !important;
+      margin: 0 auto !important;
+    }
+    #certificado {
+      width: 297mm !important;
+      height: 210mm !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+      margin: 0 !important;
+      box-shadow: none !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
   }
 
   /* Toast notification */
@@ -763,7 +808,7 @@ Pilates: Abordagem Multidisciplinar · Traumato-Ortopédica</textarea>
       <span class="spinner" id="spinner"></span>
       <span id="btnTxt">⬇ Baixar PDF</span>
     </button>
-    <button class="btn btn-primary" onclick="window.print()">🖨 Imprimir</button>
+    <button class="btn btn-primary" onclick="imprimir()">🖨 Imprimir</button>
   </div>
 </div>
 
@@ -1021,29 +1066,73 @@ Pilates: Abordagem Multidisciplinar · Traumato-Ortopédica</textarea>
     toast('Campos limpos');
   }
 
+  // ===== IMPRIMIR =====
+  function imprimir() {
+    const container = document.getElementById('cert-scale-container');
+    const originalTransform = container.style.transform;
+    const originalWidth = container.style.width;
+    const originalHeight = container.style.height;
+
+    // Remove scale para impressão correta
+    container.style.transform = 'none';
+    container.style.width = '1122px';
+    container.style.height = '794px';
+
+    setTimeout(() => {
+      window.print();
+      // Restaura após o diálogo de impressão
+      setTimeout(() => {
+        container.style.transform = originalTransform;
+        container.style.width = originalWidth;
+        container.style.height = originalHeight;
+        ajustarEscala();
+      }, 800);
+    }, 80);
+  }
+
   // ===== GERAR PDF =====
   async function gerarPDF() {
     const btn = document.getElementById('btnPDF');
     const txt = document.getElementById('btnTxt');
     const spinner = document.getElementById('spinner');
+    const container = document.getElementById('cert-scale-container');
+    const cert = document.getElementById('certificado');
 
     btn.disabled = true;
     txt.textContent = 'Gerando...';
     spinner.style.display = 'block';
 
+    // Guarda e remove o scale (html2canvas falha com transform)
+    const originalTransform = container.style.transform;
+    const originalWidth = container.style.width;
+    const originalHeight = container.style.height;
+    container.style.transform = 'none';
+    container.style.width = '1122px';
+    container.style.height = '794px';
+
     try {
-      const cert = document.getElementById('certificado');
+      // Pequeno delay para o browser recalcular o layout real
+      await new Promise(r => setTimeout(r, 60));
+
       const canvas = await html2canvas(cert, {
         scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#FAF7F2',
         logging: false,
+        width: 1122,
+        height: 794,
+        windowWidth: 1122,
+        windowHeight: 794
       });
 
       const imgData = canvas.toDataURL('image/jpeg', 0.95);
       const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4'
+      });
 
       const pW = pdf.internal.pageSize.getWidth();
       const pH = pdf.internal.pageSize.getHeight();
@@ -1054,10 +1143,17 @@ Pilates: Abordagem Multidisciplinar · Traumato-Ortopédica</textarea>
       pdf.save(`Certificado_${nomeAluna}_${nomeCurso}.pdf`);
 
       toast('✓ PDF baixado com sucesso!');
-    } catch(e) {
-      toast('Erro ao gerar PDF. Tente imprimir.');
+    } catch (e) {
       console.error(e);
+      toast('Erro ao gerar PDF. Abrindo impressão...');
+      // Fallback: tenta imprimir
+      setTimeout(() => imprimir(), 400);
     } finally {
+      // Restaura o scale
+      container.style.transform = originalTransform;
+      container.style.width = originalWidth;
+      container.style.height = originalHeight;
+      ajustarEscala();
       btn.disabled = false;
       txt.textContent = '⬇ Baixar PDF';
       spinner.style.display = 'none';
