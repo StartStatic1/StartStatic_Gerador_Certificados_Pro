@@ -612,55 +612,25 @@
     to { transform: rotate(360deg); }
   }
 
-  /* ===== PRINT ===== */
+  /* ===== PRINT (usado só se o navegador imprimir a página direta) ===== */
   @media print {
-    @page {
-      size: A4 landscape;
-      margin: 0 !important;
-    }
-    * {
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
-    html, body {
-      background: white !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      overflow: hidden !important;
-    }
-    /* Esconde tudo, depois mostra só o certificado */
-    body * {
-      visibility: hidden !important;
-    }
-    #certificado,
-    #certificado * {
-      visibility: visible !important;
-    }
-    #certificado {
-      position: absolute !important;
-      left: 0 !important;
-      top: 0 !important;
-      width: 297mm !important;
-      height: 210mm !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      box-shadow: none !important;
-      overflow: hidden !important;
-      transform: none !important;
-      z-index: 99999 !important;
-    }
-    /* Remove scale dos containers pais (sem display:none neles) */
-    .preview-wrapper,
-    .preview-scaler,
-    #cert-scale-container {
-      position: static !important;
+    @page { size: A4 landscape; margin: 0; }
+    body { background: white !important; margin: 0; padding: 0; }
+    .app-header, #painel, .preview-label, .btn-row, .toast { display: none !important; }
+    .preview-wrapper, .preview-scaler, #cert-scale-container {
       transform: none !important;
       width: auto !important;
       height: auto !important;
-      overflow: visible !important;
       box-shadow: none !important;
+      overflow: visible !important;
       margin: 0 !important;
       padding: 0 !important;
+    }
+    #certificado {
+      width: 1122px !important;
+      height: 794px !important;
+      transform: none !important;
+      box-shadow: none !important;
     }
   }
 
@@ -1063,62 +1033,34 @@ Pilates: Abordagem Multidisciplinar · Traumato-Ortopédica</textarea>
     toast('Campos limpos');
   }
 
-  // ===== IMPRIMIR =====
-  function imprimir() {
-    const container = document.getElementById('cert-scale-container');
-    const cert = document.getElementById('certificado');
-    const originalTransform = container.style.transform;
-    const originalWidth = container.style.width;
-    const originalHeight = container.style.height;
-    const originalCertW = cert.style.width;
-    const originalCertH = cert.style.height;
+  // ===== CAPTURA DO CERTIFICADO (clone fora da tela) =====
+  async function capturarCertificado() {
+    const original = document.getElementById('certificado');
 
-    // Remove scale e força tamanho real
-    container.style.transform = 'none';
-    container.style.width = '1122px';
-    container.style.height = '794px';
-    cert.style.width = '1122px';
-    cert.style.height = '794px';
+    // Cria clone limpo, sem scale e fora da tela
+    const clone = original.cloneNode(true);
+    clone.id = 'cert-clone-temp';
+    clone.style.cssText = [
+      'position: fixed',
+      'left: 0',
+      'top: 0',
+      'width: 1122px',
+      'height: 794px',
+      'transform: none',
+      'z-index: -9999',
+      'pointer-events: none',
+      'opacity: 1',
+      'overflow: hidden',
+      'background: #FAF7F2'
+    ].join(';');
 
-    setTimeout(() => {
-      window.print();
-      // Restaura após o diálogo de impressão
-      setTimeout(() => {
-        container.style.transform = originalTransform;
-        container.style.width = originalWidth;
-        container.style.height = originalHeight;
-        cert.style.width = originalCertW;
-        cert.style.height = originalCertH;
-        ajustarEscala();
-      }, 1000);
-    }, 100);
-  }
+    document.body.appendChild(clone);
 
-  // ===== GERAR PDF =====
-  async function gerarPDF() {
-    const btn = document.getElementById('btnPDF');
-    const txt = document.getElementById('btnTxt');
-    const spinner = document.getElementById('spinner');
-    const container = document.getElementById('cert-scale-container');
-    const cert = document.getElementById('certificado');
-
-    btn.disabled = true;
-    txt.textContent = 'Gerando...';
-    spinner.style.display = 'block';
-
-    // Guarda e remove o scale (html2canvas falha com transform)
-    const originalTransform = container.style.transform;
-    const originalWidth = container.style.width;
-    const originalHeight = container.style.height;
-    container.style.transform = 'none';
-    container.style.width = '1122px';
-    container.style.height = '794px';
+    // Espera layout + fontes
+    await new Promise(r => setTimeout(r, 120));
 
     try {
-      // Pequeno delay para o browser recalcular o layout real
-      await new Promise(r => setTimeout(r, 60));
-
-      const canvas = await html2canvas(cert, {
+      const canvas = await html2canvas(clone, {
         scale: 2,
         useCORS: true,
         allowTaint: true,
@@ -1127,10 +1069,108 @@ Pilates: Abordagem Multidisciplinar · Traumato-Ortopédica</textarea>
         width: 1122,
         height: 794,
         windowWidth: 1122,
-        windowHeight: 794
+        windowHeight: 794,
+        onclone: function(doc) {
+          const c = doc.getElementById('cert-clone-temp');
+          if (c) {
+            c.style.transform = 'none';
+            c.style.width = '1122px';
+            c.style.height = '794px';
+          }
+        }
       });
+      return canvas;
+    } finally {
+      // Remove o clone sempre
+      if (clone.parentNode) clone.parentNode.removeChild(clone);
+    }
+  }
 
+  // ===== IMPRIMIR (gera imagem e imprime ela) =====
+  async function imprimir() {
+    toast('Preparando impressão...');
+    try {
+      const canvas = await capturarCertificado();
       const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+      // Tenta abrir em nova janela (melhor qualidade)
+      const win = window.open('', '_blank');
+      if (win) {
+        win.document.write(`<!DOCTYPE html><html><head>
+          <title>Certificado</title>
+          <style>
+            @page { size: A4 landscape; margin: 0; }
+            html, body { margin: 0; padding: 0; background: white; }
+            img { width: 100%; height: auto; display: block; page-break-inside: avoid; }
+          </style>
+        </head><body>
+          <img id="c" src="${imgData}">
+          <script>
+            document.getElementById('c').onload = function() {
+              setTimeout(function(){ window.focus(); window.print(); }, 300);
+            };
+          <\/script>
+        </body></html>`);
+        win.document.close();
+        return;
+      }
+
+      // Fallback sem pop-up: overlay na mesma página
+      let overlay = document.getElementById('print-overlay');
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'print-overlay';
+        overlay.style.cssText = 'display:none;position:fixed;inset:0;background:white;z-index:999999;padding:0;margin:0;';
+        document.body.appendChild(overlay);
+      }
+      overlay.innerHTML = `<img src="${imgData}" style="width:100%;height:auto;display:block;">`;
+      overlay.style.display = 'block';
+
+      // Esconde o resto temporariamente
+      document.body.classList.add('printing-mode');
+
+      const style = document.createElement('style');
+      style.id = 'print-temp-style';
+      style.textContent = `
+        @media print {
+          body > *:not(#print-overlay) { display: none !important; }
+          #print-overlay { display: block !important; position: static !important; }
+          @page { size: A4 landscape; margin: 0; }
+        }
+      `;
+      document.head.appendChild(style);
+
+      setTimeout(() => {
+        window.print();
+        setTimeout(() => {
+          overlay.style.display = 'none';
+          overlay.innerHTML = '';
+          document.body.classList.remove('printing-mode');
+          const s = document.getElementById('print-temp-style');
+          if (s) s.remove();
+        }, 800);
+      }, 300);
+
+    } catch (e) {
+      console.error(e);
+      toast('Erro ao preparar impressão');
+    }
+  }
+
+  // ===== GERAR PDF =====
+  async function gerarPDF() {
+    const btn = document.getElementById('btnPDF');
+    const txt = document.getElementById('btnTxt');
+    const spinner = document.getElementById('spinner');
+
+    btn.disabled = true;
+    txt.textContent = 'Gerando...';
+    spinner.style.display = 'block';
+
+    try {
+      const canvas = await capturarCertificado();
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF({
         orientation: 'landscape',
@@ -1149,15 +1189,9 @@ Pilates: Abordagem Multidisciplinar · Traumato-Ortopédica</textarea>
       toast('✓ PDF baixado com sucesso!');
     } catch (e) {
       console.error(e);
-      toast('Erro ao gerar PDF. Abrindo impressão...');
-      // Fallback: tenta imprimir
-      setTimeout(() => imprimir(), 400);
+      toast('Erro ao gerar PDF. Tentando imprimir...');
+      setTimeout(() => imprimir(), 500);
     } finally {
-      // Restaura o scale
-      container.style.transform = originalTransform;
-      container.style.width = originalWidth;
-      container.style.height = originalHeight;
-      ajustarEscala();
       btn.disabled = false;
       txt.textContent = '⬇ Baixar PDF';
       spinner.style.display = 'none';
