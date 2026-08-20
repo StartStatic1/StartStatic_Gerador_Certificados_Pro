@@ -557,47 +557,20 @@
     letter-spacing: 0.5px;
   }
 
-  /* Selo */
+  /* Selo personalizado */
   .cert-selo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-  .cert-selo-ring {
-    width: 74px; height: 74px;
-    border-radius: 50%;
-    border: 2px solid var(--fenix-gold);
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
-    position: relative;
-    background: radial-gradient(circle, rgba(250,247,242,1) 0%, rgba(240,230,210,0.8) 100%);
+    width: 108px;
+    height: 108px;
+    flex-shrink: 0;
   }
-  .cert-selo-ring::before {
-    content: '';
-    position: absolute;
-    inset: 4px;
-    border-radius: 50%;
-    border: 0.5px solid rgba(184,134,11,0.4);
-  }
-  .cert-selo-text {
-    font-family: 'Cinzel', serif;
-    font-size: 6.5px;
-    color: var(--fenix-gold);
-    letter-spacing: 1px;
-    text-align: center;
-    position: relative;
-    z-index: 1;
-  }
-  .cert-selo-year {
-    font-family: 'Cinzel', serif;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--fenix-orange);
-    position: relative;
-    z-index: 1;
+  .cert-selo-image {
+    display: block;
+    width: 108px;
+    height: 108px;
+    object-fit: contain;
   }
 
   /* ===== RESPONSIVO PREVIEW ===== */
@@ -928,10 +901,7 @@ Pilates: Abordagem Multidisciplinar · Traumato-Ortopédica</textarea>
             </div>
 
             <div class="cert-selo">
-              <div class="cert-selo-ring">
-                <div class="cert-selo-text">STUDIO<br>FÊNIX</div>
-                <div class="cert-selo-year" id="dAno">2025</div>
-              </div>
+              <img class="cert-selo-image" src="assets/selo-sandra.png" alt="Selo Studio Fênix — Profa. Esp. Sandra Isabel">
             </div>
           </div>
 
